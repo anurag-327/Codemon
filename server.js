@@ -3,6 +3,9 @@ const app=express();
 const path=require('path');
 const fs=require('fs');
 const port=5000||process.env;
+app.use(express.json());
+
+const wretch=require ("wretch");
 app.use(express.urlencoded());
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'./views'));
@@ -15,6 +18,10 @@ app.get("/",async (req,res)=>
 {
     const queslist=await question.find();
     return res.render("index",{question:queslist});
+})
+app.get("/compiler",async (req,res)=>
+{
+   return res.render("compiler");
 })
 app.get("/addques",addques_controller.addques)
 app.post('/addques',addques_controller.saveques)

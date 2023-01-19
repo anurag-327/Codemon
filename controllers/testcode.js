@@ -3,29 +3,29 @@ const path=require("path");
 const fs=require('fs');
 const cors = require('cors');
 const { stdout } = require("process");
+const { json } = require("body-parser");
 const exec = require('child_process').exec;
+
 module.exports.testcode=function(req,res)
 {
-    // console.log(req.body);
     fs.writeFileSync(path.join(__dirname,"../input_code.cpp"), req.body.code);
-    const savecode=async () =>
-    {
-        console
-        try{
-            const newcode=new codes({
-                code:req.body.code
-            })
-            const resultcode=await newcode.save();
-            // console.log(resultcode);
-        }
-        catch(err)
-        {
-            console.log(err.message);
-        }
-    }
+    fs.writeFileSync(path.join(__dirname,"../input.txt"), req.body.input);
+    // const savecode=async () =>
+    // {
+    //     console
+    //     try{
+    //         const newcode=new codes({
+    //             code:req.body.code
+    //         })
+    //         const resultcode=await newcode.save();
+    //         // console.log(resultcode);
+    //     }
+    //     catch(err)
+    //     {
+    //         console.log(err.message);
+    //     }
+    // }
     // savecode();
-    // runcode();
-    // let result={"output":' ',"error":''};
 
     
 function appfile()
@@ -39,13 +39,15 @@ function appfile()
                 console.log(" 1 error",error.message);
                 console.log("appfile promise rejected");
                 reject("request rejected");
+                // res.status(605);
+                return(res.json({error:error.message}))
             }
             else
             {
                 console.log("appfile promise resolved");
                 resolve("Accepted promise"); 
             }
-          //   console.log("stdout in 1st fn",stdout);
+
         });
     })
 }
@@ -67,7 +69,8 @@ function runfile()
                 console.log("output: ",stdout);
                 console.log("promise resolved");
                 resolve("app resolved")
-                return(res.json("app run sucessfully"));
+                // res.status(200)
+                return(res.json({"output":stdout}));
               }
               
           });
@@ -79,12 +82,8 @@ function runfile()
     .catch(function ()
     {
         console.log("could not execute  app file")
-        return(res.json("could not execute"))
-    })
-
-          
-
-          
+        // return(res.json("could not execute"))
+    })          
 }
 
 

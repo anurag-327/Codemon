@@ -1,66 +1,68 @@
-// const { response } = require("express");
-
-// const form=document.querySelector(".form").FormData();
-const val=document.querySelector(".code").value;
 const savebtn=document.querySelector(".savebtn");
-savebtn.addEventListener("click",()=>
-{
-//     console.log(val);
-    // alert("save pressed")
-    // var textfileasblob=new Blob([val],{type:"text/plain"});
-    // var downloadlink=document.createElement("a");
-    // downloadlink.download="code.cpp";
-    // downloadlink.innerhtml="download code";
-    // if(window.webkitURL!=null)
-    // {
-    //     downloadlink.href=window.webkitURL.createObjectURL(textfileasblob);
-    // }
-    // else
-    // {
-    //     alert("not allowed")
-    // }
-    // downloadlink.click();
+const runbtn=document.querySelector(".run");
 
-    fetch("http://localhost:5000/test/",options)
-.then((response) =>     response.json()
-)
-.then((data) =>
-{
-    console.log(data);
+
+
+runbtn.addEventListener('click', async () =>{
+    const val=document.querySelector("#codebox").value;
+    const output=document.querySelector(".output");
+    const input=output.value;
+    console.log("code",val);
+    console.log("input",input);
+     let options={
+        method:"POST",
+        headers:
+        {
+            "Content-type":"application/json"
+        },
+        body:JSON.stringify({code:val,input:input})
+    }
+     let p= await fetch("http://localhost:5000/test",options);
+     let response= await p.json();
+     console.log(response);
+     if(response.error)
+     {
+        // console.log(response.error);
+        // const place=response.error.indexOf("error");
+        const error=response.error.slice(48,response.error.length);
+        console.log(error);
+        // const errmessage=response.error.slice(toString(response.error.indexof("error")),23)
+        output.classList.add("text-red-800");
+        // output.innerHTML="";
+        output.value=error;
+     }
+     else
+     {
+        output.innerHTML="";
+        output.value=response.output;
+        output.classList.remove("text-red-800");
+        output.classList.add("text-black");
+     }
+
+
 })
-.catch(err => console.log(err))
+
+savebtn.addEventListener('click',() =>
+{
+    const val=document.querySelector("#codebox").value;
+    // console.log(val);
+    alert("save pressed")
+    var textfileasblob=new Blob([val],{type:"text/plain"});
+    var downloadlink=document.createElement("a");
+    downloadlink.download="code.cpp";
+    downloadlink.innerhtml="download code";
+    if(window.webkitURL!=null)
+    {
+        downloadlink.href=window.webkitURL.createObjectURL(textfileasblob);
+    }
+    else
+    {
+        downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+    	downloadLink.onclick = destroyClickedElement;
+    	downloadLink.style.display = "none";
+    	document.body.appendChild(downloadLink);
+        alert("not allowed")
+    }
+    downloadlink.click();
+
 })
-
-
-let options={
-    method:"POSt",
-    headers:{
-        "Content-type":"application/json"
-    },
-    body:JSON.stringify({code:val})
-}
-
-
-// savebtn.addEventListener("click",async () =>
-// {
-//     var datatosend={
-//         code:value,
-//         id:1
-//     };
-//     var data=new FormData();
-//     data.append("json",JSON.stringify(datatosend));
-//     fetch("http://localhost:5000/test",{
-//         method:"POST",
-//         headers:
-//         {
-//             "Content-type":"application/json/x-www-form-urlencoded"
-//         },
-//         body:JSON.stringify({code:value})
-//     })
-//     .then((response) => response.json)
-//     .then((data) => console.log(data))
-//     .catch((err) =>
-//     {
-//         console.log(err)
-//     })
-// })
