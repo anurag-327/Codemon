@@ -2,21 +2,24 @@ const express=require('express');
 const app=express();
 const path=require('path');
 const fs=require('fs');
-const port=5000||process.env;
-app.use(express.json());
-
 const wretch=require ("wretch");
-app.use(express.urlencoded());
+const port=5000||process.env;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'./views'));
 app.use(express.static(__dirname));
+
 const mongoose=require("./controllers/mongoose");
 const question=require("./model/question")
 const testcode_controller=require("./controllers/testcode");
 const addques_controller=require("./controllers/addques");
+
 app.get("/",async (req,res)=>
 {
     const queslist=await question.find();
+    console.log(queslist);
     return res.render("index",{question:queslist});
 })
 app.get("/compiler",async (req,res)=>

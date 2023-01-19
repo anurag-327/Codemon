@@ -36,15 +36,16 @@ function appfile()
         {
             if(error || stderr)
             {
-                console.log(" 1 error",error.message);
-                console.log("appfile promise rejected");
+                // console.log(" 1 error",error.message);
+                // console.log("appfile promise rejected");
                 reject("request rejected");
                 // res.status(605);
+                console.log("code gave error");
                 return(res.json({error:error.message}))
             }
             else
             {
-                console.log("appfile promise resolved");
+                // console.log("appfile promise resolved");
                 resolve("Accepted promise"); 
             }
 
@@ -60,16 +61,17 @@ function runfile()
           {
               if(error || stderr)
               {
-                  console.log(" 2 error",error.message);
-                  console.log(" 2 stderr",stderr);
+                //   console.log(" 2 error",error.message);
+                //   console.log(" 2 stderr",stderr);
                   reject("cannot make app run");
               }
               else
               {
-                console.log("output: ",stdout);
-                console.log("promise resolved");
+                // console.log("output: ",stdout);
+                // console.log("promise resolved");
                 resolve("app resolved")
                 // res.status(200)
+                console.log("code ran and gave an output");
                 return(res.json({"output":stdout}));
               }
               
@@ -82,7 +84,7 @@ function runfile()
     .catch(function ()
     {
         console.log("could not execute  app file")
-        // return(res.json("could not execute"))
+        return(res.json({error:"could not execute"}))
     })          
 }
 

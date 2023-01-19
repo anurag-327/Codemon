@@ -791,10 +791,6 @@ video {
   height: 1rem;
 }
 
-.min-h-\[8rem\]{
-  min-height: 8rem;
-}
-
 .w-\[50\%\]{
   width: 50%;
 }
@@ -2590,10 +2586,6 @@ video {
     .sm\:container{
       max-width: 1536px;
     }
-  }
-
-  .sm\:hidden{
-    display: none;
   }
 
   .sm\:w-full{

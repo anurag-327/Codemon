@@ -6,7 +6,7 @@ const runbtn=document.querySelector(".run");
 runbtn.addEventListener('click', async () =>{
     const val=document.querySelector("#codebox").value;
     const output=document.querySelector(".output");
-    const input=output.value;
+    const input=document.querySelector(".input").value;
     console.log("code",val);
     console.log("input",input);
      let options={

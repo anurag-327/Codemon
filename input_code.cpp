@@ -2,8 +2,9 @@
 using namespace std;
 int main()
 {
-        //Write your code here 
-        freopen("input.txt","r",stdin);
-        cout<<"Hello World 1";                               
+         freopen("input.txt","r",stdin);
+        //do not remove above lines to avoid code failure
+        //Write your code here      
+        cout<<"Hello World";                               
 }
                             
