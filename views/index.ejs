@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <title>Codemon</title>
+        <link rel="stylesheet" href="../assets/styles/output.css">
+    </head>
+    <body class="bg-slate-200 ">
+        <div class="flex  sm:flex-col sm:w-full sm:gap-0 md:flex-col md:w-full">
+            <div class="w-[50%] p-10 border border-black sm:w-full md:w-full">
+                <span class="text-4xl font-bold">Question</span>
+                <p class="mt-4 text-2xl font-bold"><%= question[0].question %></p>
+                <div class="mt-2">
+                    <span class="font-bold">Your task</span>
+                    <p><%= question[0].description %></p>
+                </div>
+                <div class="w-full mt-4 flex flex-col gap-5">
+                    <div class="w-[60%]  border-gray-600 p-2 border-2">
+                        <div>
+                            <span class="font-bold">Input:</span>
+                            <span class="block"><%= question[0].input_output.sample1.input1 %></span>
+                            
+                        </div>
+                        <div>
+                            <span class="font-bold">Ouput:</span>
+                            <span class="block"><%= question[0].input_output.sample2.output2 %></span>
+                        </div>
+                    </div>
+                    <div class="w-[60%]  border-gray-600 p-2 border-2">
+                        <div>
+                            <span class="font-bold">Input:</span>
+                            <span class="block"><%= question[0].input_output.sample2.input2 %></span>
+                            
+                        </div>
+                        <div>
+                            <span class="font-bold">Ouput:</span>
+                            <span class="block"><%= question[0].input_output.sample2.output2 %></span>
+                        </div>
+                    </div>      
+                </div>
+                
+            </div>
+            <div class=" w-[50%] p-6 border border-black sm:w-full  md:w-full">
+               <div>
+                <span class="text-4xl font-bold">Write Your Code Here</span>
+               </div>
+               <form action="/test" method="post" class="form">
+                <div class=" border-[2rem] rounded-2xl border-l-emerald-400 border-r-gray-300 border-t-blue-200 border-b-blue-200 mt-2">
+                    <textarea rows="20" name="code"  autofocus class=" code w-full p-4 outline-none resize-none  active:border-transparent">#include<bits/stdc++.h>
+using namespace std;
+int main()
+{
+         //Write your code here                                
+}
+                        </textarea>
+                    </div>
+                    <div class="float-right mt-2">
+                        <button  class=" p-2 bg-blue-400">Run</button>
+                        <button class=" p-2 bg-red-600 text-white">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- <div> 
+
+            <button class="savebtn p-2 bg-blue-400">save</button>
+        </div> -->
+        <script src="../assets/scripts/index.js"></script>
+    </body>
+</html>
