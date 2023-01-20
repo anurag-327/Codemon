@@ -6,7 +6,7 @@ module.exports.addques=function(req,res)
 }
 module.exports.saveques=function(req,res)
 {
-    console.log(req.body);
+    
     const createques=async() =>
     {
         const newquestion= new newques(
@@ -25,12 +25,15 @@ module.exports.saveques=function(req,res)
                         input2:req.body.input[1],
                         output2:req.body.output[1]
                     }
-                }
+                },
+                defaultcode:req.body.defaultcode,
+                questionpoints:req.body.questionpoints,
+                testcases:[{input:req.body.input[0],output:req.body.output[0]},{input:req.body.input[1],output:req.body.output[1]}]   
             }
         )
         const result= await newquestion.save();
 
     }
     createques();
-    return res.json("Question Saved")
+    return res.redirect("/");
 }

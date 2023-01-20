@@ -40,6 +40,16 @@ const newques=new mongoose.Schema(
             }
             
         },
+        testcases:{type:Array,default:[]},
+        questionpoints:
+        {
+            type:Number,
+            default:50
+        },
+        defaultcode:
+        {
+            type:String
+        }
         
     },
     {

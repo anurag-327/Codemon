@@ -6,7 +6,7 @@ const { stdout } = require("process");
 const { json } = require("body-parser");
 const exec = require('child_process').exec;
 
-module.exports.testcode=function(req,res)
+module.exports.compilecode=function(req,res)
 {
     fs.writeFileSync(path.join(__dirname,"../input_code.cpp"), req.body.code);
     fs.writeFileSync(path.join(__dirname,"../input.txt"), req.body.input);
@@ -72,7 +72,12 @@ function runfile()
                 resolve("app resolved")
                 // res.status(200)
                 console.log("code ran and gave an output");
-                return(res.json({"output":stdout}));
+                // return(res.json({"output":stdout}));
+                fs.readFile('output.txt', 'utf8', function(err, data){
+                    
+                    // console.log(data);
+                    return(res.json({"output":data}));
+                });
               }
               
           });
@@ -84,7 +89,7 @@ function runfile()
     .catch(function ()
     {
         console.log("could not execute  app file")
-        return(res.json({error:"could not execute"}))
+        // return(res.json({error:"could not execute"}))
     })          
 }
 
