@@ -46,6 +46,11 @@ const newques=new mongoose.Schema(
             type:Number,
             default:50
         },
+        difficultylevel:
+        {
+            type:String,
+            default:"medium"
+        },
         defaultcode:
         {
             type:String

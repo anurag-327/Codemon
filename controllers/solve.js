@@ -144,14 +144,35 @@ module.exports.submitcode= async function(req,res)
         }
         if(flag==true)
         {
-            console.log("unattempted question")
+            const savecode=async () =>
+            {
+                try{
+                     const newcode=new codes({
+                     code:req.body.code,
+                     questionid:question._id,
+                     userid:req.cookies.user_id,
+                     })
+                     const resultcode=await newcode.save();
+                    }
+                    catch(err)
+                    {
+                        console.log(err.message);
+                    }
+            }
+                   savecode();
+            // console.log("unattempted question")
             array.push({questionid:question._id});
             const data= await users.findByIdAndUpdate(req.cookies.user_id,{$inc:{'userpoints':50},questionssolved:array});
             return(res.json({result:true,pointsobtained:50}));
         }
-        
+        else
+        {
+           const code= await codes.find({userid:req.cookies.user_id,questionid:question._id});
+           const codeid= await codes.findByIdAndUpdate(codes._id,{code:req.body.code})
+           return(res.json({result:true})); 
+        }
 
-        return(res.json({result:true}));
+        
 
 }
 

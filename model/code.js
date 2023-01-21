@@ -5,8 +5,17 @@ const newcode=new mongoose.Schema(
         code:
         {
             type:String,
-            required:true
+            required:true,
+            default:" "
         },
+        userid:
+        {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        questionid:
+        {
+            type: mongoose.Schema.Types.ObjectId
+        }
         
     },
     {

@@ -25,19 +25,19 @@
             <a href="/"><i class=" ml-4 fa-solid fa-arrow-left-long"></i></a>
         </div>
         <div class="flex  sm:flex-col sm:w-full sm:gap-0 md:flex-col md:w-full">
-            <div class="w-[50%] p-10 border bg-violet-200 border-black sm:w-full md:w-full">
+            <div class="w-[50%]  p-10 border bg-violet-200 border-black sm:w-full md:w-full">
                 <span class="text-4xl font-bold">Question</span>
                 <div>
                     <span class="font-bold">Question id: </span>
-                    <input type="text" readonly id="questionid" value="<%= question._id %>"> 
+                    <input type="text" readonly class="bg-violet-200 w-[50%] outline-none" id="questionid" value="<%= question._id %>"> 
                 </div>
-                <p class="mt-4 text-2xl font-bold whitespace-pre-wrap"><%= question.question %></p>
-                <div class="mt-2">
+                <p class="mt-4 text-2xl sm:w-full font-bold whitespace-pre-wrap"><%= question.question %></p>
+                <div class="mt-2 sm:w-full">
                     <span class="font-bold">Your task</span>
                     <p class="whitespace-pre-wrap"><%= question.description %></p>
                 </div>
                 <div class="w-full mt-4 text-black flex flex-col gap-5">
-                    <div class="w-[60%] bg-white  rounded-2xl text-black border-gray-600 p-2 border-2">
+                    <div class="w-[60%] sm:w-[100%] bg-white  rounded-2xl text-black border-gray-600 p-2 border-2">
                         <div>
                             <span class="font-bold">Input:</span>
                             <span class="block whitespace-pre-wrap"><%= question.input_output.sample1.input1 %></span>
@@ -48,7 +48,7 @@
                             <span class="block whitespace-pre-wrap"><%= question.input_output.sample1.output1 %></span>
                         </div>
                     </div>
-                    <div class="w-[60%] bg-white rounded-2xl  border-gray-600 p-2 border-2">
+                    <div class="w-[60%] sm:w-[100%] bg-white rounded-2xl  border-gray-600 p-2 border-2">
                         <div>
                             <span class="font-bold">Input:</span>
                             <span class="block whitespace-pre-wrap"><%= question.input_output.sample2.input2 %></span>
@@ -62,14 +62,13 @@
                 </div>
                 
             </div>
-            <div class=" w-[50%] p-6 border flex flex-col border-black sm:w-full  md:w-full">
+            <div class=" w-[50%]  p-6 border flex flex-col border-black sm:w-full  md:w-full">
                <div>
                 <span class="text-3xl font-bold">Write Your Code Here</span>
                </div>
                
-                <div class=" border-[0.5rem] h-auto w-auto rounded-md border-[#333]  mt-2">
-                    <textarea rows="15" spellcheck="false" name="code" id="codebox"  autofocus class=" code w-full p-4 outline-none resize-none  active:border-transparent"><%= question.defaultcode %>
-                        </textarea>
+                <div class=" border-[0.5rem] h-auto w-auto rounded-md border-white  mt-2">
+                    <textarea rows="15" spellcheck="false" name="code" id="codebox"  autofocus class=" code w-full p-4 outline-none resize-none  active:border-transparent"><% if(usercode){%><%= usercode %><% }%><% if(!usercode){%><%= question.defaultcode %><%} %></textarea>
                     </div>
                     <div class=" w-full float-right mt-2 flex gap-6 justify-end">
                         <button   class="runbtn px-4 hover:shadow-lg hover:scale-105 transform transition duration-300 rounded-md  py-2 bg-blue-400">Run</button>
@@ -93,12 +92,12 @@
                       </div>
                     
 
-                    <div class="w-[80%] resultdiv hidden m-auto mt-5">
+                    <div class="w-[80%] sm:w-full resultdiv hidden m-auto mt-5">
                         <span class="font-bold">Result : </span>
                         <span class="resultstatus font-bold text-violet-800">Submit code to get answer : </span>
                         <span class="points block font-bold">Points Alotted😎 : </span>
                     </div>
-                    <div class="w-[80%] submitresultdiv hidden  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
+                    <div class="w-[80%] sm:w-full submitresultdiv hidden  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
                         <span class=" w-full font-bold text-left">Code Failed At :</span>
                         <div class=" w-[90%]">
                             <div class="expectedoutputonsubmitdiv ">
@@ -117,7 +116,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-[80%] inputdiv  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
+                    <div class="w-[80%] sm:w-full inputdiv  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
                         <span class=" w-full font-bold text-left">INPUT:</span>
                         <div class=" w-[90%]">
                             <textarea rows="4" spellcheck="false" class=" p-2 input resize-none outline-none w-full  whitespace-pre-wrap "><%=question.input_output.sample1.input1 %></textarea>
@@ -128,7 +127,7 @@
                         <div class=" w-[90%]">
                         </div>
                     </div> -->
-                    <div class="w-[80%] outputdiv  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
+                    <div class="w-[80%] sm:w-full outputdiv  rounded-xl bg-white h-auto p-4 mt-10 m-auto border-2 border-black shadow-sm ">
                         <span class=" w-full font-bold text-left">OUTPUTS:</span>
                         <div class=" w-[90%]">
                             <div class="expectedoutputdiv hidden">

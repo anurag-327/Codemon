@@ -26,7 +26,7 @@
                 </ul>
             </div>
         </nav>
-        <div class="bg-[#333] w-full h-80 flex  ">
+        <div class="bg-[#333] w-full h-80 flex   ">
             <div class="ml-52 mt-8 box-border w-auto h-auto flex gap-12 justify-center ">
                 <div class=" w-40 h-40 border-2 rounded-md  border-white">
                     <img src="../assets/avatar/meinAvatarsmall.png" alt="avatar">
@@ -41,138 +41,260 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-start w-[80%] sm:w-[90%] sm:flex-col m-auto">
+        <div class="flex justify-start w-[80%] profile sm:w-[90%] sm:flex-col m-auto">
             <div class="w-[30%] sm:w-[90%] ml-5 flex flex-col sm:flex-row gap-2 p-2">
-                <div class="p-3 cursor-pointer detailsbtn sm:p-1 w-full bg-violet-400  rounded-md">
+                <div class="p-3 text-center cursor-pointer detailsbtn sm:p-1 w-full bg-violet-400  rounded-md">
                     <span>Profile</span>
                 </div>
-                <div class="p-3 cursor-pointer problemssolvedbtn sm:p-1 w-full  text-black rounded-md">
+                <div class="p-3 text-center cursor-pointer problemssolvedbtn sm:p-1 w-full  text-black rounded-md">
                     <span>Problems Solved</span>
                 </div>
-                <div class="p-3 cursor-pointer sm:p-1 w-full pointsbtn  text-black rounded-md">
+                <div class="p-3 text-center cursor-pointer sm:p-1 w-full pointsbtn  text-black rounded-md">
                     <span>Points</span>
                 </div>
                
             </div>
             <div class=" w-[60%] detailscontainer  -mt-20 sm:mt-4 sm:w-[100%] sm:p-1 rounded-md z-10 p-3  m-auto bg-white shadow-xl">
-                <div class="p-3">
-                    <span class="font-bold">Basic Info</span>
+                <div class="flex  p-5">
+                    <div class="w-[80%]">
+                        <span class="font-bold">Basic Info</span>
+                    </div>
+                    <div class="">
+                        <button class="editinfo underline text-blue-700">Edit</button>
+                     </div>
+                    
                 </div>
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Name </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.name %>">  
+                        <input type="text" readonly class=" w-full outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.name %>">  
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div>
                 <hr class=" h-px bg-gray-200"> 
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Gender </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.personaldetails.gender %>">
+                        <span><%= user.personaldetails.gender %></span>
+                        
                     </div>
-                    <div class="">
-                       <a href="#" class="underline text-blue-700">edit</a>
-                    </div>
+                   
                 </div>
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Location </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.personaldetails.location %>">
+                        <span><%= user.personaldetails.location %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div>
                 <hr class=" h-px bg-gray-200"> 
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Summary </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.personaldetails.summary %>">
+                        <span><%= user.personaldetails.summary %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div>
                 <hr class=" h-px bg-gray-200"> 
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Github </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.socialmedia.github %>">
+                        <span><%= user.socialmedia.github %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                   
                 </div>
                 <hr class=" h-px bg-gray-200"> 
                 <div class="flex p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Linkedin </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.socialmedia.linkedin %>">
+                        <span><%= user.socialmedia.linkedin %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div>
                 <hr class=" h-px bg-gray-200"> 
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Twitter </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.socialmedia.twitter %>">
+                        <span><%= user.socialmedia.twitter %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div>
                 <!-- <hr class=" h-px bg-gray-200">  -->
                 <div class="p-3">
                     <span class=" mt-2 font-bold">Skills</span>
                 </div>
                 <div class="flex  p-5">
-                    <div class="w-[30%]">
+                    <div class="w-[40%]">
                         <h3>Technical Skills </h3>
                     </div>
                     <div class="w-[50%]">
-                        <input type="text" readonly class="outline-none placeholder:text-black rounded-sm shadow-sm p-1 bg-gray-100" placeholder="<%= user.personaldetails.skills %>">
+                        <span><%= user.personaldetails.skills %></span>
+                        
                     </div>
-                    <div class="">
-                        <a href="#" class="underline text-blue-700">edit</a>
-                     </div>
+                    
                 </div> 
                     
             </div>
             <div class=" w-[60%] problemssolvedcontainer hidden -mt-20 min-h-[25rem] flex flex-col gap-4 sm:mt-4 sm:w-[100%] sm:p-1 rounded-md z-10 p-3  m-auto bg-white shadow-xl">
                 <span class="font-bold">Problems Solved</span>
                 <% for(let i of user.questionssolved) { %>
-                   <div class="w-full p-3 flex justify-between bg-gray-500 shadow-md rounded-md text-white">
-                    <div>
-                        <span><%= i.questionid.question %></span>
-                    </div>
-                    <div>
-                        <span class="font-bold"><%= i.questionid.questionpoints %> 😎</span>
-
+                    <a href="/solve/<%= i.questionid._id %>"><div class="w-full p-3 flex justify-between bg-gray-500 shadow-md rounded-md text-white">
+                        <div>
+                            <span><%= i.questionid.question %></span>
+                        </div>
+                        <div>
+                            <span class="font-bold"><%= i.questionid.questionpoints %> 😎</span>
+    </a>
+                   
                     </div>
                 </div>
                     <% }%>
             </div>
+            <div class=" w-[60%] -mt-20 min-h-[25rem]   pointscontainer hidden flex flex-col justify-center gap-1 sm:mt-4 sm:w-[100%] sm:p-1 rounded-md z-10 p-3  m-auto bg-white shadow-xl ">
+                       <div class="w-60 h-60 border-8 border-black flex justify-center bg-center bg-opacity-10 bg-[url('../avatar/meinAvatarsmall.png')] bg-no-repeat rounded-[50%] text-center m-auto bg-white ">
+                        
+                       </div>
+                       <div class="text-center -mt-4 text-violet-700">
+                        <span class="font-extrabold blur-none m-auto text-4xl text-center  z-50">
+                            Points : <%= user.userpoints %>
+                        </span>
+                       </div>
+            </div>
         </div>
          
+
+
+        <div class=" w-[50%] editform hidden -mt-20  sm:mt-4 sm:w-[90%] sm:p-1 rounded-md z-10 p-3  m-auto bg-white shadow-xl">
+            <form action="/update" method="post">
+                <div class="text-center">
+                    <span class="font-bold text-3xl text-violet-700">Edit Personal Details</span>
+                </div>
+            <div class="flex  p-5">
+                <div class="w-[80%]">
+                    <span class="font-bold">Basic Info</span>
+                </div>
+               
+                
+            </div>
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Name </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="name" readonly  class=" w-full outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.name %>">  
+                </div>
+                
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Gender </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="gender"  class=" w-full outline-none gender value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.personaldetails.gender %>">
+                </div>
+               
+            </div>
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Location </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="location"  class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.personaldetails.location %>">
+                </div>
+                
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Summary </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="summary" class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.personaldetails.summary %>">
+                </div>
+                
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Github </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="github"  class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.socialmedia.github %>">
+                </div>
+               
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="flex p-5">
+                <div class="w-[40%]">
+                    <h3>Linkedin </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="linkedin"  class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.socialmedia.linkedin %>">
+                </div>
+                
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Twitter </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="twitter"  class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.socialmedia.twitter %>">
+                </div>
+                
+            </div>
+            <hr class=" h-px bg-gray-200"> 
+            <div class="p-3">
+                <span class=" mt-2 font-bold">Skills</span>
+            </div>
+            <div class="flex  p-5">
+                <div class="w-[40%]">
+                    <h3>Technical Skills </h3>
+                </div>
+                <div class="w-[50%]">
+                    <input type="text" spellcheck="false" name="skills"  class="w-full  outline-none value:text-black rounded-sm shadow-sm p-1 bg-gray-100" value="<%= user.personaldetails.skills %>">
+                </div>
+                
+            </div> 
+            <div class="flex justify-between p-10">
+               <a href="/profile"><button class="bg-blue-600 p-2 text-white rounded-md" >Cancel</button></a>
+                <button class="bg-red-600 p-2 text-white rounded-md" type="submit">Update</button>
+            </div>
+            </form>  
+        </div>
+
+        <footer class="relative bg-blue-50 pt-8 pb-6 mt-6">
+            <hr class="my-6 border-blue-300">
+            <div class="flex flex-wrap items-center md:justify-between justify-center">
+              <div class="w-full md:w-4/12 px-4 mx-auto text-center">
+                <div class="text-sm text-blueGray-500 font-semibold py-1">
+                  Copyright © <span id="get-current-year">2023</span>
+                  <span> Codemon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
         <script src="../assets/scripts/account.js"></script>
     </body>
 </html>
