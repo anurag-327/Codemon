@@ -51,7 +51,7 @@ function data(pos)
     const outputtc=outputtestcase[pos];
     const input=inputtc.value;
     const output=outputtc.value;
-    console.log(input,output);
+    // console.log(input,output);
     addtestcase(input,output);
 }
 

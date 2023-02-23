@@ -12,7 +12,7 @@ const resultdiv=document.querySelector(".resultdiv");
 const loader=document.querySelector(".loader");
 var editor = CodeMirror.fromTextArea(document.getElementById('codebox'), {
     lineNumbers: true,
-    mode: 'text/x-c++src',    
+    mode: 'text/javascript',    
     theme: "neo", 
     matchBrackets: true,
     smartIndent: true,

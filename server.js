@@ -44,9 +44,15 @@ app.get("/login",(req,res) =>
 })
 app.get("/profile",async (req,res) =>
 {
-    const user=await users.findOne({_id:req.cookies.user_id}).populate({path:"questionssolved",populate:{path:"questionid"}});
+    if(req.cookies.user_id)
+    {
+        const user=await users.findOne({_id:req.cookies.user_id}).populate({path:"questionssolved",populate:{path:"questionid"}});
+        res.render("account",{user_id:req.cookies.user_id,user:user});
+    }
+    else
+    res.render("error");
+
     // console.log(user);
-    res.render("account",{user_id:req.cookies.user_id,user:user});
 })
 app.get('/signout',function(req,res)
 {

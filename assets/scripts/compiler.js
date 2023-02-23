@@ -1,6 +1,11 @@
 const savebtn=document.querySelector(".savebtn");
 const runbtn=document.querySelector(".run");
 
+const loader=document.querySelector("#loader");
+window.addEventListener("load",() =>
+{
+   loader.classList.add("hidden");
+})
 var editor = CodeMirror.fromTextArea(document.getElementById('codebox'), {
     lineNumbers: true,
     mode: 'text/x-c++src',    
