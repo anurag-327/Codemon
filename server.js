@@ -33,7 +33,7 @@ app.get("/",async (req,res)=>
     }
     else
     {
-         queslist=await questions.find({difficultylevel:filter});
+         queslist=await questions.find({difficultyLevel:filter});
     }
     return res.render("index",{questions:queslist,user_id:req.cookies.user_id});
 })
@@ -115,5 +115,5 @@ app.use((req,res,next)=>{
     return res.json("Error page");
 })
 app.listen(port,() =>{
-    console.log("Server connected at 5000");
+    console.log("Server connected at",port);
 })

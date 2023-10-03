@@ -102,7 +102,7 @@ module.exports.submitcode= async function(req,res)
 {
     const code=req.body.code;
     const question=await questions.findOne({_id:req.body.id});
-    const testcases=await question.testcases;
+    const testcases=await question.testCases;
     for(let i of testcases )
     {
         const input=i.input;
@@ -129,7 +129,7 @@ module.exports.submitcode= async function(req,res)
         }
     }
         const userdetails=await users.findOne({_id:req.cookies.user_id});
-        const array=await userdetails.questionssolved;
+        const array=await userdetails.questionsSolved;
         let flag=true;
         for(let i of array)
         { 
@@ -162,7 +162,7 @@ module.exports.submitcode= async function(req,res)
                    savecode();
             // console.log("unattempted question")
             array.push({questionid:question._id});
-            const data= await users.findByIdAndUpdate(req.cookies.user_id,{$inc:{'userpoints':50},questionssolved:array});
+            const data= await users.findByIdAndUpdate(req.cookies.user_id,{$inc:{'userpoints':50},questionsSolved:array});
             return(res.json({result:true,pointsobtained:50}));
         }
         else
