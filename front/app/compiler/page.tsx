@@ -7,7 +7,7 @@ import { API_URL } from "@/credentials";
 import { saveCode } from "@/helper/codeDownloader";
 
 const compiler = () => {
-  const editorRef=useRef<React.MutableRefObject<null>>(null);
+  const editorRef=useRef<number | any>(null);
   const [theme,setTheme]=useState<string>("light");
   const [input,setInput]=useState<string>("");
   const [output,setOutput]=useState<string>("");
@@ -15,7 +15,7 @@ const compiler = () => {
   const [error,setError]=useState<boolean>(false);
   const defaultCode=`#include<bits/stdc++.h>\nusing namespace std;\nint main(){
     cout<<"Hello World";\n}`
-  function handleEditorDidMount(editor, monaco) {
+  function handleEditorDidMount(editor:number|any) {
       editorRef.current = editor;
   }
   async function runCode()
