@@ -16,7 +16,8 @@ app.get("/",(req,res)=>
 
 // auth api's
 app.use("/api/auth",require("./routes/auth"))
-
+// user api's
+app.use("/api/user",require("./routes/user"))
 //compiler api's
 app.use("/api/v1/compiler",require("./routes/compiler"))
 //solver api's

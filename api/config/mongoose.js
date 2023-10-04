@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://0.0.0.0:27017/Codemon")
+mongoose.connect(process.env.MONGO_URL)
 .then(()=> console.log("Database connected sucessfully"))
 .catch(err => console.log("error setting up database"));
 
