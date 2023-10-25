@@ -39,11 +39,13 @@ export default function RootLayout({
             const userData=await res.json();
             if(userData.status==200)
             {
+              console.log(userData)
               setUser(userData.user);
               setGlobalLoading(false);
             }
             else
             {
+              console.log("token misssing")
               setGlobalLoading(false)
               console.log("Mini data fetch failed");
             }
@@ -53,7 +55,10 @@ export default function RootLayout({
          }
       }())
     }
-
+    else
+    {
+      setGlobalLoading(false)
+    }
     Router.events.on('routeChangeStart', () => setGlobalLoading(true));
     Router.events.on('routeChangeComplete', () => setGlobalLoading(false));
     Router.events.on('routeChangeError', () => setGlobalLoading(false));   

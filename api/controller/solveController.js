@@ -255,7 +255,7 @@ function checkOutput(req,res,fileName,code,input)
             {
                if(error || stderr)
                {
-                    console.log("fail")
+                    console.log("fail",error,stderr)
                    reject({result:false,error:stderr});
                }
                else

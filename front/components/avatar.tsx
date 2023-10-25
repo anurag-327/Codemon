@@ -2,7 +2,7 @@ import React from 'react'
 
 const Avatar = ({value}:{value:string}) => 
 {
-     const arr=value.split(" ");
+     const arr=value.split("");
      let avatar="";
      for(let i of arr)
      {
