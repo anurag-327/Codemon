@@ -28,7 +28,7 @@ const Solve_QuestionSection = ({question}:{question:any}) => {
             <div>
             <div className='mt-10'>
             {
-                question.sampleCases.map((data:any,index:Number) =>
+                question.sampleCases.map((data:any,index:any) =>
                  <div className='flex flex-col gap-1 mt-4'>
                      <span className='font-semibold text-gray-700 '>Example : {index+1}</span>
                      <div className='px-2 my-2 ml-4 border-l-2 border-gray-500'>
