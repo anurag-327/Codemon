@@ -2,7 +2,7 @@
 import { Formik, FormikHelpers } from "formik";
 import { useState,useEffect } from "react";
 import * as Yup from 'yup';
-import {API_URL} from "@/credentials/index"
+import {API_URL, QUICKSIGN_CLIENTID, QUICKSIGN_CLIENTSECRET, QUICKSIGN_URL} from "@/credentials/index"
 import { getToken,setToken,removeToken } from "@/helper/tokenhandler";
 import { ShieldWarning } from "phosphor-react";
 import { useSearchParams,useRouter } from "next/navigation";
@@ -32,6 +32,7 @@ export default function page() {
   const initialValues: formValues = { userName: "", email: "", password: "", name:"" };
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<String>('');
+  const url=window.location.href;
   async function handleSignup(values:formValues)
   {
     console.log(values)
@@ -302,6 +303,10 @@ export default function page() {
               </form>
             )}
           </Formik>
+          <div>
+                <div className="my-2 font-semibold text-center">OR</div>
+                <a className='flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-600 rounded-md' href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`} target=""><img src="https://github.com/anurag-327/QuickSign/assets/98267696/41b1ac46-5372-40c1-b9ce-7beb15ba4659" alt="logo"/>Sign In with QuickSign</a>
+          </div>
         </div>
       </div>
     </main>

@@ -14,5 +14,5 @@ router.post("/signup",[
     check('password', 'Password length should be 5 to 8 characters').isLength({ min: 5, max: 20 })
 ],authController.signup)
 
-
+router.post("/oauth",authController.oauth);
 module.exports=router;

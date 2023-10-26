@@ -3,7 +3,7 @@ import { Formik, FormikHelpers } from "formik";
 import { useState,useEffect } from "react";
 import { ShieldWarning } from "phosphor-react";
 import *as Yup from 'yup'
-import {API_URL} from "@/credentials/index"
+import {API_URL, QUICKSIGN_CLIENTID, QUICKSIGN_CLIENTSECRET, QUICKSIGN_URL} from "@/credentials/index"
 import { getToken,setToken,removeToken } from "@/helper/tokenhandler";
 import { useRouter,useSearchParams } from "next/navigation";
 interface formValues {
@@ -19,10 +19,14 @@ export default function page() {
   const router=useRouter();
   const searchParams = useSearchParams()
   const callback_url=searchParams.get('callback_url')
+  const status=searchParams.get("status")
+  const quickSignToken=searchParams.get("token")
   const [showPassword, setShowpassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [quickSignLoading, setQuickSignLoading] = useState<boolean>(false);
   const [error, setError] = useState<String>('');
   const initialValues: formValues = { cred: "", password: "" };
+  const url=window.location.href;
   async function handleSignin(values:formValues)
   {
     setError('');
@@ -69,6 +73,42 @@ export default function page() {
         router.push(callback_url)
         else 
         router.push("/");
+      }
+      else
+      {
+        if(status==="true" && quickSignToken!=undefined)
+        {
+          setQuickSignLoading(true)
+          setLoading(true);
+          (async function(){
+            let options={
+              method:"POST",
+              headers:{
+                "content-type":"application/json"
+              },
+              body:JSON.stringify({token:quickSignToken})
+            }
+            const response=await fetch(`${API_URL}/api/auth/oauth`,options);
+            const result= await response.json();
+            if(result.status==200)
+            {
+              setToken(result.token)
+              setLoading(false);
+              setQuickSignLoading(false)
+              if(callback_url)
+              router.push(callback_url)
+              else 
+              router.push("/");  
+            } 
+            else
+            {
+              setQuickSignLoading(false)
+              setLoading(false);
+              console.log(result)
+              router.push("/login")
+            }
+          }()) 
+        }
       }
   },[])
   return (
@@ -216,6 +256,13 @@ export default function page() {
               </form>
             )}
           </Formik>
+          <div>
+                <div className="my-2 font-semibold text-center">OR</div>
+                {
+                  quickSignLoading?(<span className={` flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-400 rounded-md`}>Authenticating</span>):(<a className={` flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-600 rounded-md`} href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`} target=""><img src="https://github.com/anurag-327/QuickSign/assets/98267696/41b1ac46-5372-40c1-b9ce-7beb15ba4659" alt="logo"/>Sign In with QuickSign</a>)
+                }
+                
+          </div>
         </div>
       </div>
     </main>
