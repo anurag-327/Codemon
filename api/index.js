@@ -26,6 +26,7 @@ app.use("/api/v1/solve",require("./routes/solve"))
 app.use("/api/v1/data",require("./routes/data"))
 // api to update database
 app.use("/api/v1/update",require("./routes/update"))
+
 app.listen(PORT,(err)=>
 {
     if(err)

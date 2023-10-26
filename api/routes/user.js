@@ -1,11 +1,11 @@
 const express=require("express")
 const router=express.Router();
 const {verifyToken}=require("../controller/verifyToken");
-
+const userController=require("../controller/userController")
 // user profile
-router.get("/:id",require("../controller/userController").getUser)
 // mini data of user
-router.get("/getMinidata",verifyToken,require("../controller/userController").getMinidata)
+router.get("/getMinidata",verifyToken,userController.getMinidata)
+router.get("/:id",userController.getUser)
 
 
 module.exports=router;

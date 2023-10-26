@@ -35,13 +35,13 @@ const userSchema= new mongoose.Schema(
             type:Number,
             default:0
         },
-        questionsSolved:[{
-            questionid:
+        questionsSolved:[
+           
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref:'questions'
-            },
-    }]},
+            }
+    ]},
     {
         timestamps:true
     }

@@ -5,7 +5,7 @@ import {Play,Code} from "phosphor-react"
 import Editor from '@monaco-editor/react';
 import { API_URL } from "@/credentials";
 import { saveCode } from "@/helper/codeDownloader";
-
+import { CodeBlock } from "@phosphor-icons/react/dist/ssr";
 const compiler = () => {
   const editorRef=useRef<number | any>(null);
   const [theme,setTheme]=useState<string>("light");
@@ -60,12 +60,18 @@ const compiler = () => {
   return (
     <div className={`${theme==="light"?"bg-gray-50":"bg-zinc-900"} overflow-hidden h-screen p-2`}>
       <div className={`${theme==="light"?"bg-gray-50":"bg-zinc-900"} flex justify-end rounded-md border border-gray-300 p-2 mb-2 header`}>
-        <div className="flex gap-4 lg:ml-10">
-             <button disabled={loading} onClick={runCode} className={`px-3 py-1.5  rounded-full  ${loading?"bg-blue-300":"bg-blue-600 hover:bg-blue-700"} `}><Play className="inline-block" size={22} color="#ffffff" weight="bold" /><span className="ml-1 font-semibold text-white">{loading?"Running":"Run"}</span></button>
+        <div className="flex flex-row justify-between w-full lg:ml-10">
+              <a href="/" className="flex items-center ml-4 logo">
+                <CodeBlock size={32} weight="fill" />
+                <span>Codemon</span>
+             </a>
+             <div className="flex gap-2">
+             <button disabled={loading} onClick={runCode} className={`px-3 py-1.5  rounded-md  ${loading?"bg-blue-300":"bg-blue-600 hover:bg-blue-700"} `}><Play className="inline-block" size={22} color="#ffffff" weight="bold" /><span className="ml-1 font-semibold text-white">{loading?"Running":"Run"}</span></button>
               <button onClick={()=> saveCode(editorRef.current.getValue())} className="items-center px-4 py-1.5 font-semibold text-gray-800 border bg-white border-orange-500 rounded hover:bg-gray-400">
                 <svg className="inline-block w-4 h-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
                 <span>Save Code</span>
               </button>
+             </div>
         </div>
         {/* <div>
             <a href="https://www.github.com/anurag-327" className="flex flex-col items-center justify-center px-3 bg-white border rounded-md border-t-blue-500 border-b-red-500 border-r-gray-500 border-l-orange-400 "><span className="ml-2 text-[0.8rem] font-bold text-gray-800">Codemon IDE<Code className="inline-block ml-2" size={18} color="#541db9" weight="bold" /></span><span className="block text-[0.7rem] font-bold ">by <span className="text-blue-600 underline">@anurag-327</span></span></a>

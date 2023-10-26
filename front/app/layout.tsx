@@ -39,7 +39,6 @@ export default function RootLayout({
             const userData=await res.json();
             if(userData.status==200)
             {
-              console.log(userData)
               setUser(userData.user);
               setGlobalLoading(false);
             }
@@ -50,7 +49,7 @@ export default function RootLayout({
               console.log("Mini data fetch failed");
             }
          } catch (error) {
-          setGlobalLoading(false)
+            setGlobalLoading(false)
             console.log(error)
          }
       }())

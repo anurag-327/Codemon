@@ -21,13 +21,12 @@ const Questions = () => {
             const data= await response.json();
             if(response.status===200 && data.status===200)
             {
-                  console.log(data)
                   setQuestions(data.questions);
                   setLoading(false)
             }
             else
             {
-                  
+                
             }
         }
     getData();

@@ -2,6 +2,8 @@
 import { useState,useEffect } from "react";
 import { API_URL } from "@/credentials";
 import { useStore } from "@/zustand/useStore";
+import { CodeBlock } from "@phosphor-icons/react/dist/ssr";
+import Navbar from "@/components/navbar";
 interface slug{
     slug:string[]
 }
@@ -24,11 +26,11 @@ const page = ({ params }:{params:slug}) => {
               if(userData.status==200)
               {
                 console.log(userData)
-                
                 setLoading(false)
               }
               else
               {
+                console.log(userData)
                 setLoading(false)
                 setError(userData.message)
                 console.log("Mini data fetch failed");
@@ -41,40 +43,30 @@ const page = ({ params }:{params:slug}) => {
     },[])
   return (
     <>
-       
-        <div className="bg-[#333] w-full h-80 flex   ">
-            <div className="box-border flex justify-center w-auto h-auto gap-12 mt-8 ml-52 ">
-                <div className="w-40 h-40 border-2 border-white rounded-md ">
-                  
-                </div>
-                <div className="w-auto h-20 mt-10 text-white">
-                    <div>
-                        <span className="font-bold">username 👨‍💻</span>
-                    </div>
-                    <div>
-                        <span className="text-sm text-gray-300 font-extralight">Codemon Id: </span>
-                    </div>
-                </div>
-            </div>
+      <nav className="z-10 flex items-center justify-between w-full py-3 bg-white shadow-md p">
+        <div className="firstpanel">
+             <a href="https://github.com/anurag-327/Codemon" className="flex items-center ml-4 logo">
+                <CodeBlock size={32} weight="fill" />
+                <span>Codemon</span>
+             </a>
         </div>
-        <div className="flex justify-start w-[80%] profile sm:w-[90%] sm:flex-col m-auto">
-            <div className="w-[30%] sm:w-[90%] ml-5 flex flex-col sm:flex-row gap-2 p-2">
-                <div className="w-full p-3 text-center rounded-md cursor-pointer detailsbtn sm:p-1 bg-violet-400">
-                    <span>Profile</span>
-                </div>
-                <div className="w-full p-3 text-center text-black rounded-md cursor-pointer problemssolvedbtn sm:p-1">
-                    <span>Problems Solved</span>
-                </div>
-                <div className="w-full p-3 text-center text-black rounded-md cursor-pointer sm:p-1 pointsbtn">
-                    <span>Points</span>
-                </div>
-               
-            </div>
-            <div className=" w-[60%] detailscontainer  -mt-20 sm:mt-4 sm:w-[100%] sm:p-1 rounded-md z-10 p-3  m-auto bg-white shadow-xl">
+        <div className="flex items-center gap-2 mr-3 secondpanel">
+             <a className="px-2 py-1 underline" href="/">Home</a>
+             <a className="px-2 py-1 underline" href="/compiler">Compiler</a>
+        </div>
+    </nav>
+    <main>
 
-            </div>
-        </div>
-      
+	<div className="flex items-center mt-10 ">
+		<div className="flex items-center justify-center w-full gap-2">
+			<nav className="flex gap-2 ">
+				<a href="#" className="text-blue-700 underline hover:underline hover:text-blue-600"> Profile </a>
+				<a href="#" className="hover:underline hover:text-blue-700"> Solved-Questions </a>
+				{/* <a href="#" className="hover:underline hover:text-blue-700"> Edit </a> */}
+			</nav>
+		</div>
+	</div>
+    </main>
     </>
   )
 }

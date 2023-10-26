@@ -6,7 +6,7 @@ interface question{
 }
 const QuestionContainer = ({data}:{data:question}) => {
   return (
-    <a href={`solve/${data.question}`} className='w-full hover:scale-[1.02] hover:font-semibold flex mx-auto justify-between items-center shadow-sm  border border-gray-200 hover:border-gray-400 rounded-md transform translate duration-500 px-2 py-3  md:w-[90%] md:min-w-[600px]' >
+    <a href={`solve/${data.question}`} className='w-full  hover:font-semibold flex mx-auto justify-between items-center shadow-sm  border border-gray-200 hover:border-gray-400 rounded-md  px-2 py-3  md:w-[90%] md:min-w-[600px]' >
                 <div className='text-sm overflow-hidden text-gray-600  w-[45%]'>{data.question}</div>
                 { 
                     data.difficultyLevel==1&&<div className='text-[0.6rem] px-3 py-2 w-[15%] text-center  bg-orange-200 rounded-full text-gray-600'>Easy</div>
@@ -22,7 +22,7 @@ const QuestionContainer = ({data}:{data:question}) => {
                         <Fire size={20} color="#FFEB2A" weight="fill" />{data.points}
                     </div>    
                 </div>
-                <div className='text-[0.7rem] w-[20%] px-2 py-1  rounded-full flex justify-center items-center text-gray-600'>
+                <div className='text-[0.7rem] hidden  w-[20%] px-2 py-1  rounded-full md:inline-flex justify-center items-center text-gray-600'>
                     {
                         data.difficultyLevel===1&& "10 mins"
                     }

@@ -7,6 +7,7 @@ module.exports.getUser=async(req,res,next) =>
         {
              const user=await User.find({username:username})
              .select("-password")
+             .populate({path:"questionsSolved",select:"question _id"})
              if(user)
              {
                  return res.status(200).json({status:200,user});
@@ -23,17 +24,20 @@ module.exports.getUser=async(req,res,next) =>
         
     }catch (err) 
     {
-        return res.status(500).json({status:500,mesaage:err.message})
+        return res.status(500).json({status:500,message:err.message})
     }
 }
 module.exports.getMinidata=async(req,res,next) =>
 {
+    
     try{
+        console.log(req.user._id)
         const user=await User.findById(req.user._id)
         .select("username _id email name")
+        console.log(user)
         if(user)
         {
-            return res.status(200).json({status:200,user});
+            return res.status(200).json({status:200,user:user});
         }
         else
         {
@@ -41,6 +45,6 @@ module.exports.getMinidata=async(req,res,next) =>
         }
     }catch (err) 
     {
-        return res.status(500).json({status:500,mesaage:err.message})
+        return res.status(500).json({status:500,message:err.message})
     }
 }
