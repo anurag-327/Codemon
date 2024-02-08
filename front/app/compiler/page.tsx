@@ -16,7 +16,7 @@ const compiler = () => {
   const [error, setError] = useState<boolean>(false);
   // const defaultCode = `#include<bits/stdc++.h>\nusing namespace std;\nint main()\n{
   //   cout<<"Hello World";\n}`;
-  const defaultCode = `void solve()\n{\n   // Do not create main function \n   // Write your code here \n \n}`;
+  const defaultCode = `void solve()\n{\n   // Do not create main function \n   // Write your code here \n   cout<<"Hello World"; \n}`;
 
   function handleEditorDidMount(editor: number | any) {
     editorRef.current = editor;
@@ -36,6 +36,7 @@ const compiler = () => {
       };
       const response = await fetch(API_URL + "/api/v1/compiler/compile", body);
       const data = await response.json();
+      console.log(data);
       if (response.status === 200 && data.status == 200) {
         setError(false);
         setLoading(false);

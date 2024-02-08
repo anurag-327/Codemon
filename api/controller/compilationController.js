@@ -1,3 +1,4 @@
+const TIMEOUT_LIMIT = 10000;
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const fs = require("fs");
@@ -54,10 +55,10 @@ module.exports.compile = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res
       .status(500)
-      .json({ status: 500, message: "Internal Server Error" });
+      .json({ status: 500, message: "Runtime Error/Time Limit Exceeded" });
   }
 };
 
@@ -83,27 +84,27 @@ function checkExeFile(req, res, fileName, codeFileName) {
   });
 }
 
-function runCode(req, res, fileName, input) {
-  fs.writeFileSync(
-    path.join(process.cwd(), `./code/${fileName}_input.txt`),
-    input
-  );
-  return new Promise(function (resolve, reject) {
-    try {
-      const exeFilePath = path.join(process.cwd(), `./code/${fileName}.exe`);
-      exec(`${exeFilePath}`, (error, stdout, stderr) => {
-        if (error || stderr) {
-          console.log(error, stderr);
-          reject({ status: false, error: stderr });
-        } else {
-          resolve({ status: true, output: stdout });
-        }
-      });
-    } catch (error) {
-      return res.status(500).json({ status: 500, message: error.message });
-    }
-  });
-}
+// function runCode(req, res, fileName, input) {
+//   fs.writeFileSync(
+//     path.join(process.cwd(), `./code/${fileName}_input.txt`),
+//     input
+//   );
+//   return new Promise(function (resolve, reject) {
+//     try {
+//       const exeFilePath = path.join(process.cwd(), `./code/${fileName}.exe`);
+//       exec(`${exeFilePath}`, (error, stdout, stderr) => {
+//         if (error || stderr) {
+//           // console.log(error, stderr);
+//           reject({ status: false, error: stderr });
+//         } else {
+//           resolve({ status: true, output: stdout });
+//         }
+//       });
+//     } catch (error) {
+//       return res.status(500).json({ status: 500, message: error.message });
+//     }
+//   });
+// }
 
 function deleteFiles(fileName) {
   const files = [
@@ -115,5 +116,38 @@ function deleteFiles(fileName) {
     fs.unlink(`./code/${file}`, function (err) {
       if (err) throw err;
     });
+  }
+}
+
+function runCode(req, res, fileName, input) {
+  try {
+    fs.writeFileSync(
+      path.join(process.cwd(), `./code/${fileName}_input.txt`),
+      input
+    );
+    const exeFilePath = path.join(process.cwd(), `./code/${fileName}.exe`);
+    return new Promise(function (resolve, reject) {
+      const startTime = Date.now();
+      const timeoutId = setTimeout(() => {
+        process.kill(childProcess.pid, "SIGTERM");
+        reject({ status: false, error: "Time Limit Exceeded" });
+      }, TIMEOUT_LIMIT);
+      const childProcess = exec(`${exeFilePath}`, (error, stdout, stderr) => {
+        clearTimeout(timeoutId);
+        if (error || stderr) {
+          reject({ status: false, error: stderr });
+        } else {
+          const endTime = Date.now();
+          const executionTime = endTime - startTime;
+          if (executionTime > TIMEOUT_LIMIT) {
+            reject({ status: false, error: "Time Limit Exceeded" });
+          } else {
+            resolve({ status: true, output: stdout });
+          }
+        }
+      });
+    });
+  } catch (error) {
+    return res.status(500).json({ status: 500, message: error.message });
   }
 }

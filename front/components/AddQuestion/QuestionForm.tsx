@@ -168,7 +168,8 @@ const QuestionForm = () => {
     const data = await response.json();
     if (data.status == 201) {
       //success
-      router.push(`/solve/${data.name}`);
+
+      router.push(`/solve/${data.question.question}`);
     } else {
       setLoading(false);
       setError(data.message);
@@ -263,6 +264,10 @@ const QuestionForm = () => {
             }}
             onEditorChange={handleRichTextChange}
           />
+          {/* <Quill
+            value={questionData.description}
+            changeHandler={handleQuillRichTextChange}
+          /> */}
           {/* <CKEditor
             editor={ClassicEditor}
             data="<p>Hello, CKEditor 5!</p>"

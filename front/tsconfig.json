@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/AddQuestion/QuestionForm.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/AddQuestion/QuestionForm.jsx", "components/AddQuestion/Quill.jsx"],
   "exclude": ["node_modules"]
 }
