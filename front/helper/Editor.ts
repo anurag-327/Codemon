@@ -4,20 +4,17 @@ export const EditorOptions = {
     fontFamily: "monospace",
     fontSize: 13,
     lineHeight: 20,
-    hideCursorInOverviewRuler: true,
     matchBrackets: "always",
     minimap: {
       enabled: false,
     },
     scrollbar: {
       horizontalSliderSize: 4,
-      verticalSliderSize: 18,
+      verticalSliderSize: 14,
     },
     selectOnLineNumbers: true,
-    roundedSelection: false,
     readOnly: false,
     cursorStyle: "line",
-    automaticLayout: true,
   };
 export const ReadOnlyEditorOptions = {
     autoIndent: "full",
@@ -25,18 +22,14 @@ export const ReadOnlyEditorOptions = {
     fontFamily: "monospace",
     fontSize: 13,
     lineHeight: 20,
-    hideCursorInOverviewRuler: true,
-    matchBrackets: "always",
     minimap: {
       enabled: true,
     },
     scrollbar: {
       horizontalSliderSize: 4,
-      verticalSliderSize: 18,
+      verticalSliderSize: 14,
     },
     selectOnLineNumbers: true,
-    roundedSelection: false,
     readOnly: true,
     cursorStyle: "line",
-    automaticLayout: true,
   };
