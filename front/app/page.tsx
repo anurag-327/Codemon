@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Questions from "@/components/questions";
 export default function Home() {

@@ -12,7 +12,7 @@ import {
   MapPin,
   TwitterLogo,
 } from "@phosphor-icons/react/dist/ssr";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Profile/Navbar";
 interface params {
   slug: string[];
 }
