@@ -103,18 +103,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-{
-  /* <span
-              onClick={() => {
-                removeToken();
-                router.push("/</>");
-              }}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              Logout
-            </span>
-            <a className="px-3 mr-2" href={`/users/${user.username}`}>
-              <Avatar value={user.name} />
-            </a> */
-}

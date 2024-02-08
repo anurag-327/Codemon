@@ -1,7 +1,6 @@
 "use client";
 import QuestionForm from "@/components/AddQuestion/QuestionForm";
 import Guide from "@/components/AddQuestion/Guide";
-
 const page = () => {
   return (
     <main className="w-full h-screen bg-gray-100 no-scrollbar">

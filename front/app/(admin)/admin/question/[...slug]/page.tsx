@@ -3,7 +3,6 @@ import DisplayTestCases from "@/components/AddQuestion/DisplayTestCases";
 import QuestionDescription from "@/components/AddTestcase/QuestionDescription";
 import SingleTestcase from "@/components/AddTestcase/SingleTestcase";
 import Loader from "@/components/Loader";
-import Navbar from "@/components/Navbar";
 import { API_URL } from "@/credentials";
 import { getToken } from "@/helper/tokenhandler";
 import { useStore } from "@/zustand/useStore";
@@ -54,7 +53,6 @@ const page = ({ params }: { params: params }) => {
   }, []);
   return (
     <main className="w-full bg-gray-100 md:h-screen no-scrollbar">
-      <Navbar />
       <div className="flex flex-col items-center w-full h-full gap-4 px-4 py-2 mt-12 no-scrollbar md:flex-row">
         <div className="flex flex-col pb-20 no-scrollbar items-center gap-4 w-full md:w-[55%] overflow-auto md:h-screen mt-6 bg-white  ">
           {question ? (
