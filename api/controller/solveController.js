@@ -1,309 +1,307 @@
-const {formatFile}=require("../helper/fileFormatter")
-const {runCode}=require("../helper/runCode");
-const {generateAppFile}=require("../helper/appFileGenerator");
-const {readOutput}=require("../helper/readOutput");
-const {exec}=require("child_process");
-const Question=require("../model/question");
-const Code=require("../model/code");
-const User=require("../model/user");
-const path=require("path")
-const fs=require("fs")
-const { stdout } = require("process");
+const { exec } = require("child_process");
+const questionSchema = require("../model/question");
+const testcaseSchema = require("../model/testcases");
+const User = require("../model/user");
+const path = require("path");
+const fs = require("fs");
+const { generateFileName } = require("../utils/genrateFilename");
+const submissionSchema = require("../model/submission");
 
 // testing for sample cases
-module.exports.testCode=(req,res)=>
-{
-    try {
-        const questionName=req.body.name;
-        let code=req.body.code;
-        const date=new Date();
-        const fileName=req.user._id+"_"+date.getFullYear()+date.getMonth()+date.getDate()+date.getMinutes()+date.getSeconds();
-        
-        const inputFileName=fileName+"_"+"input";
-        const outputFileName=fileName+"_"+"output";
-        // altering codes
-        const pattern=/ main\(.*\)(.*)(.*\n)?\{/g;
-        const patternIndexObject=code.matchAll(pattern);
-        const patternIndex=[...patternIndexObject][0].index;
-        const curly=code.substring(patternIndex).indexOf('{')
-        code=code.substring(0,patternIndex+curly+1)+`\n   freopen("./code/${inputFileName}.txt","r",stdin); \n `+code.substring(patternIndex+curly+1,code.length);       
-        // code and question checks
-        if(!req.body.name)
+module.exports.testCode = async (req, res) => {
+  try {
+    const questionId = req.body.questionId;
+    let userCode = req.body.code;
+
+    // checks if question Name mentioned with request
+    if (!questionId) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "Missing question name/id" });
+    }
+    // checks if any code exists
+    if (!userCode) {
+      return res.status(400).json({ status: 400, message: "Code Missing" });
+    }
+    // checks if question exists
+    const questionData = await questionSchema.findById(questionId);
+    if (!questionData)
+      return res
+        .status(404)
+        .json({ status: 400, message: "Question Not found" });
+    const testCases = questionData.sampleCases;
+    if (testCases.length == 0)
+      return res
+        .status(404)
+        .json({ status: 400, message: "Could Not get test cases" });
+    const fileName = generateFileName(req.user._id);
+    const inputFileName = fileName + "_" + "input";
+    const codeFileName = fileName + "_" + "code";
+    const ipCode = `void ip()
         {
-            return res.status(400).json({status:400,message:"Question Id Missing"})
-        }
-        if(!code)
-        {
-           return res.status(400).json({status:400,message:"Code Missing"})
-        }
-        checkCode(req,res,fileName,code,"","",).then(async(msg) =>
-        {
-            // code is successfully compiled
-            try { 
-                const questionData=await Question.findOne({question:questionName});
-                if(questionData) // question exist
-                {
-                    const sampleTestCasesData=questionData.sampleCases;
-                    for(let test of sampleTestCasesData)
-                    {
-                        
-                        const result=await checkOutput(req,res,fileName,code,test.input)
-                        if(result.result==true)
-                        {
-                            // getting answer from stdout rather than output file
-                            const output=result.output;
-                            const expectedOutput=test.output;
-                            if(output!==expectedOutput)
-                                return res.status(400).json({status:400,result:false,message:"Wrong Answer",breakPoint:{input:test.input,output:result.output,expectedOutput:test.output}})
-                        }
-                        else
-                        {
-                            return res.status(400).json({status:400,result:false,message:"Could Not execute code"})
-                        }
-                    }
-                    // all test cases passed
-                    // delete all generated files
-                    const files=[fileName+".cpp",inputFileName+".txt",outputFileName+".txt",fileName+".exe"]
-                    for(let file of files)
-                    {
-                        fs.unlink(`./code/${file}`, function (err) {
-                            if (err) throw err;
-                        });
-                    }
-                    // all sample testcases running
-                    return res.status(200).json({status:200,result:true,message:"Correct Answer"})
-                }
-                else
-                {
-                    // in valid question id
-                    return res.status(404).json({status:400,message:"Question Not found"})
-                }
-            }catch (error) 
-            {
-                console.log(error)
-            }
-        })  
-    }catch(error)
-    {
-        console.log(error)
-        return res.status(500).json({status:500,message:"Internal Server Error"})   
-    }    
-}
+            freopen("./code/${inputFileName}.txt","r",stdin);  
+        }`;
+    const code = `${questionData.defaultCode}\n${ipCode}\n${userCode}`;
+    fs.writeFileSync(
+      path.join(process.cwd(), `./code/${codeFileName}.cpp`),
+      code
+    );
+    // creating exe file
+    const executionResult = await checkExeFile(
+      req,
+      res,
+      fileName,
+      codeFileName
+    );
+    if (executionResult == true) {
+      const finalResult = await runTests(req, res, fileName, testCases);
+      if (!finalResult.passed) {
+        deleteFiles(fileName);
+        return res.status(406).json(finalResult);
+      }
+      deleteFiles(fileName);
+      return res.status(200).json({
+        status: 200,
+        result: "Accepted",
+        message: "Accepted solution",
+        passed: true,
+        hasError: false,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal Server Error" });
+  }
+};
 
 // running for sample cases
-module.exports.submitCode=async (req,res)=>
-{
-    try {
-        const questionName=req.body.name;
-        let code=req.body.code;
-        const date=new Date();
-        const fileName=req.user._id+"_"+date.getFullYear()+date.getMonth()+date.getDate()+date.getMinutes()+date.getSeconds();
-        const inputFileName=fileName+"_"+"input";
-        const outputFileName=fileName+"_"+"output";
-        // altering codes
-        const pattern=/ main\(.*\)(.*)(\n)?\{/g;
-        const patternIndexObject=code.matchAll(pattern);
-        const patternIndex=[...patternIndexObject][0].index;
-        const curly=code.substring(patternIndex).indexOf('{')
-        code=code.substring(0,patternIndex+curly+1)+`\n   freopen("./code/${inputFileName}.txt","r",stdin); \n `+code.substring(patternIndex+curly+1,code.length);
-        // code and question checks
-        if(!req.body.name)
-        {
-            return res.status(400).json({status:400,message:"Question Id Missing"})
-        }
-        if(!code)
-        {
-           return res.status(400).json({status:400,message:"Code Missing"})
-        }
-        checkCode(req,res,fileName,code,"","",).then(async(msg) =>
-        {
-            // code is successfully compiled
-            try { 
-                const questionData=await Question.findOne({question:questionName});
-                if(questionData) // question exist
-                {
-                    const testCasesData=questionData.testCases;
-                    for(let test of testCasesData)
-                    {
-                        const result=await checkOutput(req,res,fileName,code,test.input)
-                        if(result.result==true)
-                        {
-                            // getting answer from stdout rather than output file
-                            const output=result.output;
-                            const expectedOutput=test.output;
-                            if(output!==expectedOutput)
-                                return res.status(400).json({status:400,result:false,message:"Wrong Answer",breakPoint:{input:test.input,output:result.output,expectedOutput:test.output}})
-                        }
-                        else
-                        {
-                            return res.status(400).json({status:400,result:false,message:"Could Not execute code"})
-                        }
-                    }
-                    // all test cases passed
-                    // delete all generated files
-                    const files=[fileName+".cpp",inputFileName+".txt",outputFileName+".txt",fileName+".exe"]
-                    for(let file of files)
-                    {
-                        fs.unlink(`./code/${file}`, function (err) {
-                            if (err) throw err;
-                        });
-                    }
-                    
-                    // update list of solved questions and save code in database
-                    const userDetails=await User.findOne({_id:req.user._id});
-                    const array=await userDetails.questionsSolved;
-                    let flag=true;
-                    for(let i of array)
-                    { 
-                        if(i)
-                        {
-                            if(i.questionid.equals(questionData._id))
-                            {
-                               flag=false;
-                               break;
-                            }
-                        }
-                    }
-                    const savecode=async () =>
-                        {
-                            try{
-                                 const newcode=new Code({
-                                 code:req.body.code,
-                                 questionid:questionData._id,
-                                 userid:req.user._id,
-                                 })
-                                 const resultcode=await newcode.save();
-                                }
-                                catch(err)
-                                {
-                                    console.log(err.message);
-                                }
-                        }
-                    if(flag==true)  // unattempted question
-                    {
-                        
-                        savecode();
-                        array.push({questionid:questionData._id});
-                        const data2= await User.findByIdAndUpdate(req.user._id,{$inc:{'userpoints':questionData.points},questionsSolved:array});
-                        return res.status(200).json({status:200,result:true,message:"Correct Answer",pointsobtained:questionData.points})
-                    }
-                    else
-                    {
-                        savecode();
-                        return res.status(200).json({status:200,result:true,message:"Correct Answer",pointsobtained:0})
-                    }
-                }
-                else
-                {
-                    // in valid question name
-                    return res.status(404).json({status:400,message:"Question Not found"})
-                }
-            }catch (error) 
-            {
-                console.log(error)
-            }
-        })  
-    }catch(error)
-    {
-        console.log(error)
-        return res.status(500).json({status:500,message:"Internal Server Error"})   
+module.exports.submitCode = async (req, res) => {
+  try {
+    const questionId = req.body.questionId;
+    let userCode = req.body.code;
+
+    // checks if question Name mentioned with request
+    if (!questionId) {
+      return res
+        .status(400)
+        .json({ status: 400, message: "Missing question name/id" });
     }
-}
+    // checks if code exists
+    if (!userCode) {
+      return res.status(400).json({ status: 400, message: "Code Missing" });
+    }
+    // checks if question exists
+    const questionData = await questionSchema.findById(questionId);
 
+    if (!questionData)
+      return res
+        .status(404)
+        .json({ status: 400, message: "Question Not found" });
 
-function checkCode(req,res,fileName,code,input,expectedOutput)
-{
-    const inputFileName=fileName+"_"+"input";
-    const outputFileName=fileName+"_"+"output";
-    const expectedOutputFileName=fileName+"_"+"expectedOutput";
-    const codeFilePath=path.join(__dirname,`../code/${fileName}.cpp`)
-    const exeFilePath=path.join(__dirname,`../code/${fileName}.exe`)
-    formatFile(req,res,fileName,inputFileName,outputFileName,expectedOutputFileName,code,input,expectedOutput);
-    return new Promise(function(resolve,reject)
-        {
-            exec(`g++ ${codeFilePath} -o ${exeFilePath}`,(error,stdout,stderr)=>
-            {
-                try {
-                    if(error || stderr)
-                    {
-                        return(res.status(400).json({status:400,error:stderr.split("error:")[1]}))
-                        reject("request rejected");
-                    }
-                    else
-                    {
-                        resolve("Accepted promise"); 
-                    } 
-                } catch (error) {
-                    return(res.status(500).json({status:500,message:error.message}))   
-                }
-                
-            });
-        }) 
-}
-
-function checkOutput(req,res,fileName,code,input)
-{
-    const inputFileName=fileName+"_"+"input";
-    const expectedOutputFileName=fileName+"_"+"expectedOutput";
-    const outputFileName=fileName+"_"+"output";
-    formatFile(req,res,fileName,inputFileName,outputFileName,expectedOutputFileName,code,input);
-    return new Promise(function(resolve,reject)
+    const testCases = await testcaseSchema
+      .find({ questionId: questionId })
+      .select("input expectedOutput -_id");
+    if (testCases.length == 0)
+      return res
+        .status(404)
+        .json({ status: 400, message: "Could Not find test cases, Try later" });
+    const fileName = generateFileName(req.user._id);
+    const inputFileName = fileName + "_" + "input";
+    const codeFileName = fileName + "_" + "code";
+    const ipCode = `void ip()
     {
-        try {
-            const exeFilePath=path.join(__dirname,`../code/${fileName}.exe`)
-            exec(`${exeFilePath}`,(error,stdout,stderr)=>
-            {
-               if(error || stderr)
-               {
-                    console.log("fail",error,stderr)
-                   reject({result:false,error:stderr});
-               }
-               else
-               {
-                console.log("success")
-                 resolve({result:true,output:stdout})
-               }
-               
-           });
-        } catch (error) {
-            console.log(error) 
+        freopen("./code/${inputFileName}.txt","r",stdin);  
+    }`;
+    const code = `${questionData.defaultCode}\n${ipCode}\n${userCode}`;
+    fs.writeFileSync(
+      path.join(process.cwd(), `./code/${codeFileName}.cpp`),
+      code
+    );
+    // creating exe file
+    const executionResult = await checkExeFile(
+      req,
+      res,
+      fileName,
+      codeFileName
+    );
+    if (executionResult == true) {
+      const finalResult = await runTests(req, res, fileName, testCases);
+      if (!finalResult.passed) {
+        saveCode(userCode, questionId, req.user._id, "Wrong Solution", false);
+        deleteFiles(fileName);
+        return res.status(406).json(finalResult);
+      }
+      deleteFiles(fileName);
+      saveCode(userCode, questionId, req.user._id, "Accepted Solution", true);
+      const { points, questionsSolved } = await User.findById(
+        req.user._id
+      ).select("points questionsSolved -_id");
+      if (questionsSolved.includes(questionData._id)) {
+        // already submiited
+        return res.status(200).json({ ...finalResult, points: 0 });
+      } else {
+        // submitting for first time
+        updateUserInfo(
+          res,
+          questionsSolved,
+          questionId,
+          points,
+          questionData.points,
+          req.user._id
+        );
+        return res
+          .status(200)
+          .json({ ...finalResult, points: questionData.points });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ status: 500, message: "Internal Server Error" });
+  }
+};
+
+function checkExeFile(req, res, fileName, codeFileName) {
+  const codeFilePath = path.join(process.cwd(), `./code/${codeFileName}.cpp`);
+  const exeFilePath = path.join(process.cwd(), `./code/${fileName}.exe`);
+  return new Promise(function (resolve, reject) {
+    exec(`g++ ${codeFilePath} -o ${exeFilePath}`, (error, stdout, stderr) => {
+      try {
+        if (error || stderr) {
+          return res.status(400).json({
+            status: 400,
+            result: "Compile Error",
+            passed: false,
+            message: "Compile Error",
+            points: 0,
+            totalTestcases: 0,
+            successfullyPassed: 0,
+            hasError: true,
+            error: stderr.split("error:")[1],
+          });
+          reject(false);
+        } else {
+          resolve(true);
         }
-    })  
+      } catch (error) {
+        return res.status(500).json({ status: 500, message: error.message });
+      }
+    });
+  });
 }
 
- // const result=checkOutput(req,res,fileName,code,i.input,i.output)
-                            // result.then(generatedOutput =>
-                            // {
-                            //     console.log("check success")
-                            //     if(generatedOutput!=i.output)
-                            //     return res.status(400).json({ststus:400,result:false,message:"Wrong Answer",breakPoint:test})
-                            // }).catch(err=>
-                            //     {
-                            //     console.log("check fail")
-                            //     return res.status(500).json({status:500,result:false,message:"Could not execute code"})
-                            // })
+function runTest(testCase, fileName) {
+  fs.writeFileSync(
+    path.join(process.cwd(), `./code/${fileName}_input.txt`),
+    testCase.input
+  );
+  return new Promise(function (resolve, reject) {
+    try {
+      const exeFilePath = path.join(process.cwd(), `./code/${fileName}.exe`);
+      exec(`${exeFilePath}`, (error, stdout, stderr) => {
+        if (error || stderr) {
+          reject({ status: false, error: stderr });
+        } else {
+          resolve({ status: true, output: stdout });
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({ status: 500, message: error.message });
+    }
+  });
+}
 
+async function runTests(req, res, fileName, testCases) {
+  try {
+    const n = testCases.length;
+    for (let i = 0; i < n; i++) {
+      const testCase = testCases[i];
+      const executionResult = await runTest(testCase, fileName);
+      if (executionResult.status) {
+        const pass = executionResult.output === testCase.expectedOutput;
+        if (pass == false) {
+          return {
+            status: 406,
+            result: "Wrong Answer",
+            passed: pass,
+            totalTestcases: n,
+            successfullyPassed: i,
+            message: "Wrong Solution",
+            hasError: false,
+            error: null,
+            breakPoint: {
+              testCase: testCase.input,
+              expectedOutput: testCase.expectedOutput,
+              actualOutput: executionResult.output,
+            },
+          };
+        }
+      } else {
+        return res
+          .status(500)
+          .json({ status: 500, message: executionResult.error });
+      }
+    }
+    return {
+      status: 200,
+      result: "Accepted",
+      passed: true,
+      totalTestcases: n,
+      successfullyPassed: n,
+      hasError: false,
+      error: null,
+      message: "Accepted",
+    };
+  } catch (error) {
+    return res.status(500).json({ status: 500, message: error.message });
+  }
+}
 
-                            // const inputFileName=fileName+"_"+"input";
-                            // const expectedOutputFileName=fileName+"_"+"expectedOutput";
-                            // const outputFileName=fileName+"_"+"output";
-                            // console.log(inputFileName,expectedOutputFileName,outputFileName)
-                            // fs.writeFileSync(path.join(__dirname,`../code/${fileName}.cpp`),code);
-                            // fs.writeFileSync(path.join(__dirname,`../code/${inputFileName}.txt`),input);
-                            // fs.writeFileSync(path.join(__dirname,`../code/${expectedOutputFileName}.txt`),expectedOutput);
-                            // // formatFile(req,res,fileName,inputFileName,expectedOutputFileName,code,input,expectedOutput);
-                            // const exeFilePath=path.join(__dirname,`../code/${fileName}.exe`)
-                            // console.log(exeFilePath)
-                            // exec(`${exeFilePath}`,(error,stdout,stderr)=>
-                            // {
-                            //     if(error || stderr)
-                            //     {
-                            //         console.log("fail")
-                            //         reject("cannot make app run");
-                            //     }
-                            //     else
-                            //     {
-                            //         console.log("success")
-                            //         resolve(stdout)
-                            //     }
-                            // })
+function deleteFiles(fileName) {
+  const files = [
+    fileName + "_code.cpp",
+    fileName + "_input.txt",
+    fileName + ".exe",
+  ];
+  for (let file of files) {
+    fs.unlink(`./code/${file}`, function (err) {
+      if (err) throw err;
+    });
+  }
+}
+
+async function saveCode(code, questionId, userId, message, isAccepted) {
+  const newsubmission = new submissionSchema({
+    code,
+    questionId,
+    userId,
+    message,
+    isAccepted,
+  });
+  newsubmission.save();
+}
+
+async function updateUserInfo(
+  res,
+  questionsSolved,
+  questionId,
+  points,
+  questionPoints,
+  userId
+) {
+  try {
+    questionsSolved.push(questionId);
+    points += questionPoints;
+    const result = await User.findByIdAndUpdate(userId, {
+      points,
+      questionsSolved,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ status: 500, message: "Failed to updated submission records" });
+  }
+}

@@ -1,92 +1,94 @@
 "use client";
 import { Formik, FormikHelpers } from "formik";
-import { useState,useEffect } from "react";
-import * as Yup from 'yup';
-import {API_URL, QUICKSIGN_CLIENTID, QUICKSIGN_CLIENTSECRET, QUICKSIGN_URL} from "@/credentials/index"
-import { getToken,setToken,removeToken } from "@/helper/tokenhandler";
+import { useState, useEffect } from "react";
+import * as Yup from "yup";
+import {
+  API_URL,
+  QUICKSIGN_CLIENTID,
+  QUICKSIGN_CLIENTSECRET,
+  QUICKSIGN_URL,
+} from "@/credentials/index";
+import { getToken, setToken, removeToken } from "@/helper/tokenhandler";
 import { ShieldWarning } from "phosphor-react";
-import { useSearchParams,useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useStore } from "@/zustand/useStore";
 interface formValues {
   userName: string;
   email: string;
   password: string;
-  name:string;
+  name: string;
 }
 const SignupSchema = Yup.object().shape({
-    userName: Yup.string()
-      .min(2, 'Too short!')
-      .max(30, 'Too Long!')
-      .required('username field cannot be empty'),
-    name: Yup.string()
-      .min(5, 'Too short!')
-      .max(30, 'Too Long!')
-      .required('name field cannot be empty'),
-    email: Yup.string().email('Invalid email').required('Email Required'),
-    password:Yup.string().min(5,"password length should be in range 5-10").max(10,"password length should be in range 5-10")
-  });
+  userName: Yup.string()
+    .min(2, "Too short!")
+    .max(30, "Too Long!")
+    .required("username field cannot be empty"),
+  name: Yup.string()
+    .min(5, "Too short!")
+    .max(30, "Too Long!")
+    .required("name field cannot be empty"),
+  email: Yup.string().email("Invalid email").required("Email Required"),
+  password: Yup.string()
+    .min(5, "password length should be in range 5-10")
+    .max(10, "password length should be in range 5-10"),
+});
 export default function page() {
-    const router=useRouter();
-  const searchParams = useSearchParams()
-  const callback_url=searchParams.get('callback_url')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callback_url = searchParams.get("callback_url");
   const [showPassword, setShowpassword] = useState<Boolean>(false);
-  const initialValues: formValues = { userName: "", email: "", password: "", name:"" };
+  const { user, setUser } = useStore();
+  const initialValues: formValues = {
+    userName: "",
+    email: "",
+    password: "",
+    name: "",
+  };
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<String>('');
-  const url=window.location.href;
-  async function handleSignup(values:formValues)
-  {
-    console.log(values)
-    setError('');
+  const [error, setError] = useState<String>("");
+  const url = window.location.href;
+  async function handleSignup(values: formValues) {
+    setError("");
     setLoading(true);
-     try {
-        const body={
-          method:"post",
-          headers:{
-            "Content-Type":'application/json'
-          },
-          body:JSON.stringify({
-             email:values.email,
-             username:values.userName,
-             password:values.password,
-             name:values.name
-          })
-        }
-        const response=await fetch(API_URL+"/api/auth/signup",body);
-        const data=await response.json();
-        console.log(data)
-        if(response.status===200)
-        {
-           setLoading(false);
-           setToken(data.token)
-           if(callback_url)
-           router.push(callback_url)
-           else 
-           router.push("/");    
-        }
-        else
-        {
-          setLoading(false);
-          setError(data.message)
-        }
-     } catch (error) {
-         setLoading(false);
-         setError('Network Error')
-     }
-  }
-  useEffect(() =>
-  {
-      const token=getToken();
-      if(token)
-      {
-        if(callback_url)
-        router.push(callback_url)
-        else 
-        router.push("/");
+    try {
+      const body = {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          username: values.userName,
+          password: values.password,
+          name: values.name,
+        }),
+      };
+      const response = await fetch(API_URL + "/api/auth/signup", body);
+      const data = await response.json();
+      if (response.status == 201) {
+        setToken(data.token);
+        setUser(data.user);
+        if (callback_url) router.push(callback_url);
+        else router.push("/");
+      } else {
+        setLoading(false);
+        setError(data.message);
       }
-  },[])
+    } catch (error) {
+      setLoading(false);
+      setError("Network Error");
+    }
+  }
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      if (callback_url) router.push(callback_url);
+      else router.push("/");
+    }
+  }, [user]);
   return (
-    <main className="w-full font-sans h-[100vh] flex justify-center items-center">
-      <div className="flex flex-col gap-8 max-w-[380px] md:w-[380px] w-[95%]  px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
+    <main className="w-full mt-6 md:mt-0 font-sans min-h-[100vh] flex justify-center items-center">
+      <div className="flex flex-col gap-8  md:w-[450px] w-[95%]  px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
         <div>
           <h2 className="text-4xl font-bold">Sign Up</h2>
           <p className="text-sm font-semibold text-gray-600">
@@ -101,7 +103,6 @@ export default function page() {
               values: formValues,
               actions: FormikHelpers<formValues>
             ) => {
-              console.log({ values });
               handleSignup(values);
             }}
           >
@@ -139,13 +140,19 @@ export default function page() {
                       className="bg-gray-50 border focus:border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="zenitsuu"
                     />
-                   
                   </div>
                   {props.errors.name && (
-                      <div id="nameerror" className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" /> {props.errors.name}</div>
-                    )}
+                    <div id="nameerror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />{" "}
+                      {props.errors.name}
+                    </div>
+                  )}
                 </div>
-                
+
                 <div>
                   <label
                     htmlFor="email"
@@ -176,11 +183,17 @@ export default function page() {
                       className="bg-gray-50 border focus:border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="name@codemon.com"
                     />
-                    
                   </div>
                   {props.errors.email && (
-                      <div id="emailerror" className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" /> {props.errors.email}</div>
-                    )}
+                    <div id="emailerror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />{" "}
+                      {props.errors.email}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label
@@ -191,9 +204,15 @@ export default function page() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg"  className="text-gray-500 dark:text-gray-500" fill="currentColor" height="1em" viewBox="0 0 448 512">
-                        <path d="M224 16c-6.7 0-10.8-2.8-15.5-6.1C201.9 5.4 194 0 176 0c-30.5 0-52 43.7-66 89.4C62.7 98.1 32 112.2 32 128c0 14.3 25 27.1 64.6 35.9c-.4 4-.6 8-.6 12.1c0 17 3.3 33.2 9.3 48H45.4C38 224 32 230 32 237.4c0 1.7 .3 3.4 1 5l38.8 96.9C28.2 371.8 0 423.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7c0-58.5-28.2-110.4-71.7-143L415 242.4c.6-1.6 1-3.3 1-5c0-7.4-6-13.4-13.4-13.4H342.7c6-14.8 9.3-31 9.3-48c0-4.1-.2-8.1-.6-12.1C391 155.1 416 142.3 416 128c0-15.8-30.7-29.9-78-38.6C324 43.7 302.5 0 272 0c-18 0-25.9 5.4-32.5 9.9c-4.8 3.3-8.8 6.1-15.5 6.1zm56 208H267.6c-16.5 0-31.1-10.6-36.3-26.2c-2.3-7-12.2-7-14.5 0c-5.2 15.6-19.9 26.2-36.3 26.2H168c-22.1 0-40-17.9-40-40V169.6c28.2 4.1 61 6.4 96 6.4s67.8-2.3 96-6.4V184c0 22.1-17.9 40-40 40zm-88 96l16 32L176 480 128 288l64 32zm128-32L272 480 240 352l16-32 64-32z"/>
-                    </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="text-gray-500 dark:text-gray-500"
+                        fill="currentColor"
+                        height="1em"
+                        viewBox="0 0 448 512"
+                      >
+                        <path d="M224 16c-6.7 0-10.8-2.8-15.5-6.1C201.9 5.4 194 0 176 0c-30.5 0-52 43.7-66 89.4C62.7 98.1 32 112.2 32 128c0 14.3 25 27.1 64.6 35.9c-.4 4-.6 8-.6 12.1c0 17 3.3 33.2 9.3 48H45.4C38 224 32 230 32 237.4c0 1.7 .3 3.4 1 5l38.8 96.9C28.2 371.8 0 423.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7c0-58.5-28.2-110.4-71.7-143L415 242.4c.6-1.6 1-3.3 1-5c0-7.4-6-13.4-13.4-13.4H342.7c6-14.8 9.3-31 9.3-48c0-4.1-.2-8.1-.6-12.1C391 155.1 416 142.3 416 128c0-15.8-30.7-29.9-78-38.6C324 43.7 302.5 0 272 0c-18 0-25.9 5.4-32.5 9.9c-4.8 3.3-8.8 6.1-15.5 6.1zm56 208H267.6c-16.5 0-31.1-10.6-36.3-26.2c-2.3-7-12.2-7-14.5 0c-5.2 15.6-19.9 26.2-36.3 26.2H168c-22.1 0-40-17.9-40-40V169.6c28.2 4.1 61 6.4 96 6.4s67.8-2.3 96-6.4V184c0 22.1-17.9 40-40 40zm-88 96l16 32L176 480 128 288l64 32zm128-32L272 480 240 352l16-32 64-32z" />
+                      </svg>
                     </div>
                     <input
                       type="text"
@@ -205,11 +224,17 @@ export default function page() {
                       className="bg-gray-50 border focus:border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="zenitsuu-slayer"
                     />
-                   
                   </div>
                   {props.errors.userName && (
-                      <div id="usernameerror" className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" /> {props.errors.userName}</div>
-                    )}
+                    <div id="usernameerror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />{" "}
+                      {props.errors.userName}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label
@@ -263,15 +288,25 @@ export default function page() {
                         </svg>
                       )}
                     </button>
-
-                    
                   </div>
                   {props.errors.password && (
-                      <div id="passworderror" className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" /> {props.errors.password}</div>
-                    )}
+                    <div id="passworderror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />{" "}
+                      {props.errors.password}
+                    </div>
+                  )}
                 </div>
                 <div className="flex gap-1">
-                  <input className="" id="agree" defaultChecked type="checkbox" />
+                  <input
+                    className=""
+                    id="agree"
+                    defaultChecked
+                    type="checkbox"
+                  />
                   <label
                     className="text-sm font-semibold text-gray-800 "
                     htmlFor="agree"
@@ -281,7 +316,9 @@ export default function page() {
                 </div>
                 <div className="mt-2">
                   <button
-                    className={`w-full py-1.5 font-semibold text-white  rounded-md ${loading?"bg-blue-100":"bg-blue-500"}`}
+                    className={`w-full py-1.5 font-semibold text-white  rounded-md ${
+                      loading ? "bg-blue-100" : "bg-blue-500"
+                    }`}
                     type="submit"
                     disabled={loading}
                   >
@@ -296,16 +333,36 @@ export default function page() {
                       Sign In
                     </a>
                   </span>
-                  {error&& (
-                      <div id="error" className="text-sm font-semibold text-center text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" /> {error}</div>
-                    )}
+                  {error && (
+                    <div
+                      id="error"
+                      className="text-sm font-semibold text-center text-red-600"
+                    >
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />{" "}
+                      {error}
+                    </div>
+                  )}
                 </div>
               </form>
             )}
           </Formik>
           <div>
-                <div className="my-2 font-semibold text-center">OR</div>
-                <a className='flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-600 rounded-md' href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`} target=""><img src="https://github.com/anurag-327/QuickSign/assets/98267696/41b1ac46-5372-40c1-b9ce-7beb15ba4659" alt="logo"/>Sign In with QuickSign</a>
+            <div className="my-2 font-semibold text-center">OR</div>
+            <a
+              className="flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-600 rounded-md"
+              href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`}
+              target=""
+            >
+              <img
+                src="https://github.com/anurag-327/QuickSign/assets/98267696/41b1ac46-5372-40c1-b9ce-7beb15ba4659"
+                alt="logo"
+              />
+              Sign In with QuickSign
+            </a>
           </div>
         </div>
       </div>

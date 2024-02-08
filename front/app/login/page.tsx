@@ -1,119 +1,108 @@
 "use client";
 import { Formik, FormikHelpers } from "formik";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ShieldWarning } from "phosphor-react";
-import *as Yup from 'yup'
-import {API_URL, QUICKSIGN_CLIENTID, QUICKSIGN_CLIENTSECRET, QUICKSIGN_URL} from "@/credentials/index"
-import { getToken,setToken,removeToken } from "@/helper/tokenhandler";
-import { useRouter,useSearchParams } from "next/navigation";
+import * as Yup from "yup";
+import {
+  API_URL,
+  QUICKSIGN_CLIENTID,
+  QUICKSIGN_CLIENTSECRET,
+  QUICKSIGN_URL,
+} from "@/credentials/index";
+import { getToken, setToken, removeToken } from "@/helper/tokenhandler";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ShieldCheckered, ShieldStar } from "@phosphor-icons/react/dist/ssr";
+import { useStore } from "@/zustand/useStore";
 interface formValues {
   cred: string;
   password: string;
 }
 const SigninSchema = Yup.object().shape({
-  cred: Yup.string().required('Credentials required'),
-  password:Yup.string().required('Password Cannot be empty')
+  cred: Yup.string().required("Credentials required"),
+  password: Yup.string().required("Password Cannot be empty"),
 });
 
 export default function page() {
-  const router=useRouter();
-  const searchParams = useSearchParams()
-  const callback_url=searchParams.get('callback_url')
-  const status=searchParams.get("status")
-  const quickSignToken=searchParams.get("token")
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callback_url = searchParams.get("callback_url");
+  const status = searchParams.get("status");
+  const quickSignToken = searchParams.get("token");
   const [showPassword, setShowpassword] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [quickSignLoading, setQuickSignLoading] = useState<boolean>(false);
-  const [error, setError] = useState<String>('');
+  const [error, setError] = useState<String>("");
   const initialValues: formValues = { cred: "", password: "" };
-  const url=window.location.href;
-  async function handleSignin(values:formValues)
-  {
-    setError('');
+  const url = window.location.href;
+  const { user, setUser } = useStore();
+  async function handleSignin(values: formValues) {
+    setError("");
     setLoading(true);
-     try {
-        const body={
-          method:"post",
-          headers:{
-            "Content-Type":'application/json'
-          },
-          body:JSON.stringify({
-             cred:values.cred,
-             password:values.password
-          })
-        }
-        const response=await fetch(API_URL+"/api/auth/login",body);
-        const data=await response.json();
-        console.log(data)
-        if(response.status===200)
-        {
-          setToken(data.token)
-          setLoading(false);
-          if(callback_url)
-          router.push(callback_url)
-          else 
-          router.push("/");    
-        }
-        else
-        {
-          setLoading(false);
-          setError(data.message)
-        }
-     } catch (error) {
-         setLoading(false);
-         setError('Network Error')
-     }
+    try {
+      const body = {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cred: values.cred,
+          password: values.password,
+        }),
+      };
+      const response = await fetch(API_URL + "/api/auth/login", body);
+      const data = await response.json();
+      if (response.status === 200) {
+        setToken(data.token);
+        setUser(data.user);
+        if (callback_url) router.push(callback_url);
+        else router.push("/");
+      } else {
+        setLoading(false);
+        setError(data.message);
+      }
+    } catch (error) {
+      setLoading(false);
+      setError("Network Error");
+    }
   }
-  useEffect(() =>
-  {
-      const token=getToken();
-      if(token)
-      {
-        if(callback_url)
-        router.push(callback_url)
-        else 
-        router.push("/");
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      if (callback_url) router.push(callback_url);
+      else router.push("/");
+    } else {
+      if (status === "true" && quickSignToken != undefined) {
+        setQuickSignLoading(true);
+        setLoading(true);
+        (async function () {
+          let options = {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({ token: quickSignToken }),
+          };
+          const response = await fetch(`${API_URL}/api/auth/oauth`, options);
+          const result = await response.json();
+          if (result.status == 200) {
+            setToken(result.token);
+            setLoading(false);
+            setQuickSignLoading(false);
+            if (callback_url) router.push(callback_url);
+            else router.push("/");
+          } else {
+            setQuickSignLoading(false);
+            setLoading(false);
+            console.log(result);
+            router.push("/login");
+          }
+        })();
       }
-      else
-      {
-        if(status==="true" && quickSignToken!=undefined)
-        {
-          setQuickSignLoading(true)
-          setLoading(true);
-          (async function(){
-            let options={
-              method:"POST",
-              headers:{
-                "content-type":"application/json"
-              },
-              body:JSON.stringify({token:quickSignToken})
-            }
-            const response=await fetch(`${API_URL}/api/auth/oauth`,options);
-            const result= await response.json();
-            if(result.status==200)
-            {
-              setToken(result.token)
-              setLoading(false);
-              setQuickSignLoading(false)
-              if(callback_url)
-              router.push(callback_url)
-              else 
-              router.push("/");  
-            } 
-            else
-            {
-              setQuickSignLoading(false)
-              setLoading(false);
-              console.log(result)
-              router.push("/login")
-            }
-          }()) 
-        }
-      }
-  },[])
+    }
+  }, []);
   return (
     <main className="w-full font-sans h-[100vh] flex justify-center items-center">
-      <div className="flex flex-col gap-8 max-w-[350px] md:w-[330px] w-[95%] px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
+      <div className="flex flex-col gap-8  md:w-[380px] w-[95%] px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
         <div>
           <h2 className="text-4xl font-bold">Sign In</h2>
           <p className="text-sm font-semibold text-gray-600">
@@ -166,11 +155,17 @@ export default function page() {
                       className="bg-gray-50 border focus:border-2 outline-none border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5   dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="Email / username"
                     />
-                   
                   </div>
                   {props.errors.cred && (
-                      <div id="crederror"  className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" />{props.errors.cred}</div>
-                    )}
+                    <div id="crederror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />
+                      {props.errors.cred}
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -225,16 +220,23 @@ export default function page() {
                         </svg>
                       )}
                     </button>
-
-                    
                   </div>
                   {props.errors.password && (
-                      <div id="passworderror" className="text-sm text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" />{props.errors.password}</div>
-                    )}
+                    <div id="passworderror" className="text-sm text-red-600">
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />
+                      {props.errors.password}
+                    </div>
+                  )}
                 </div>
                 <div className="mt-2">
                   <button
-                    className={`w-full py-1.5 text-white  rounded-md ${loading ? "bg-blue-100":"bg-blue-500"}`}
+                    className={`w-full py-1.5 text-white  rounded-md ${
+                      loading ? "bg-blue-100" : "bg-blue-500"
+                    }`}
                     type="submit"
                     disabled={loading}
                   >
@@ -249,19 +251,41 @@ export default function page() {
                       Sign Up
                     </a>
                   </span>
-                  {error&& (
-                      <div id="error" className="text-sm font-semibold text-center text-red-600"><ShieldWarning className="inline-block"  size={20} color="#b06545" />{error}</div>
-                    )}
+                  {error && (
+                    <div
+                      id="error"
+                      className="text-sm font-semibold text-center text-red-600"
+                    >
+                      <ShieldWarning
+                        className="inline-block"
+                        size={20}
+                        color="#b06545"
+                      />
+                      {error}
+                    </div>
+                  )}
                 </div>
               </form>
             )}
           </Formik>
           <div>
-                <div className="my-2 font-semibold text-center">OR</div>
-                {
-                  quickSignLoading?(<span className={` flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-400 rounded-md`}>Authenticating</span>):(<a className={` flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-600 rounded-md`} href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`} target=""><img src="https://github.com/anurag-327/QuickSign/assets/98267696/41b1ac46-5372-40c1-b9ce-7beb15ba4659" alt="logo"/>Sign In with QuickSign</a>)
-                }
-                
+            <div className="my-2 font-semibold text-center">OR</div>
+            {quickSignLoading ? (
+              <span
+                className={` flex items-center justify-center w-full gap-2 px-6 py-1 text-white bg-green-400 rounded-md`}
+              >
+                Authenticating
+              </span>
+            ) : (
+              <a
+                className={` flex items-center justify-center w-full gap-2 px-6 py-2 text-white bg-green-600 rounded-md`}
+                href={`${QUICKSIGN_URL}/auth?clientId=${QUICKSIGN_CLIENTID}&clientSecret=${QUICKSIGN_CLIENTSECRET}&redirect_url=${url}`}
+                target=""
+              >
+                <ShieldStar size={25} />
+                Sign In with QuickSign
+              </a>
+            )}
           </div>
         </div>
       </div>

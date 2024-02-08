@@ -1,11 +1,14 @@
-const express=require("express")
-const router=express.Router();
-const {verifyToken}=require("../controller/verifyToken");
-const userController=require("../controller/userController")
+const express = require("express");
+const router = express.Router();
+const { verifyToken } = require("../controller/verifyToken");
+
 // user profile
-// mini data of user
-router.get("/getMinidata",verifyToken,userController.getMinidata)
-router.get("/:id",userController.getUser)
+router.get("/get-user/:id", require("../controller/user-controller").getUser);
+// mini data of user in case of refresh or login
+router.get(
+  "/get-minidata",
+  verifyToken,
+  require("../controller/user-controller").getMinidata
+);
 
-
-module.exports=router;
+module.exports = router;
