@@ -12,7 +12,7 @@ const mongoose = require("./config/mongoose");
 // app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
-  return res.json("Server Running Successfully");
+  return res.json("Docker Server Running ");
 });
 
 // auth api's
