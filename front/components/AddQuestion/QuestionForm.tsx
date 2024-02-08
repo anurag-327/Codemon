@@ -1,7 +1,10 @@
 "use client";
 import React, { FormEvent, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+// import ReactQuill from "react-quill";
+// import "react-quill/dist/quill.snow.css";
+import { Editor as RichEditor } from "@tinymce/tinymce-react";
+// import { CKEditor } from "@ckeditor/ckeditor5-react";
+// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Editor from "@monaco-editor/react";
 import { EditorOptions } from "@/helper/Editor";
 import { getToken } from "@/helper/tokenhandler";
@@ -41,11 +44,27 @@ const QuestionForm = () => {
     userCode: "",
   });
 
-  const handleRichTextChange = (value: string) => {
-    console.log(value);
+  const handleRichTextChange = (content: string, editor: any) => {
+    console.log(content);
+    setQuestionData((prevData) => ({
+      ...prevData,
+      description: content,
+    }));
+    console.log(questionData);
+  };
+  const handleQuillRichTextChange = (value: string) => {
+    // console.log(content);
     setQuestionData((prevData) => ({
       ...prevData,
       description: value,
+    }));
+    console.log(questionData);
+  };
+  const handleCK5TextChange = (event: any, editor: any) => {
+    const data = editor.getData();
+    setQuestionData((prevData) => ({
+      ...prevData,
+      description: data,
     }));
   };
 
@@ -216,15 +235,57 @@ const QuestionForm = () => {
           <label className="block mb-2 font-bold text-gray-700">
             Description:
           </label>
-          <ReactQuill
+          {/* <ReactQuill
             className="h-[300px]"
             theme="snow"
             value={questionData.description}
-            onChange={handleRichTextChange}
+            onChange={handleQuillRichTextChange}
             modules={modules}
             formats={formats}
             placeholder="Type your description here..."
+          /> */}
+          <RichEditor
+            value={questionData.description}
+            apiKey="3fkrtxht99dvdvnojbb1e5t8aclknuc1qtrbpeomq1zhmzns"
+            init={{
+              height: "90%",
+              menubar: true,
+              plugins: [
+                "advlist lists autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table paste code help wordcount",
+              ],
+              toolbar:
+                "undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons",
+              advlist_bullet_styles: "square",
+              advlist_number_styles:
+                "lower-alpha,lower-roman,upper-alpha,upper-roman",
+            }}
+            onEditorChange={handleRichTextChange}
           />
+          {/* <CKEditor
+            editor={ClassicEditor}
+            data="<p>Hello, CKEditor 5!</p>"
+            onChange={handleCK5TextChange}
+            config={{
+              toolbar: [
+                "heading",
+                "|",
+                "bold",
+                "italic",
+                "link",
+                "|",
+                "bulletedList",
+                "numberedList",
+                "|",
+                "outdent", // Add outdent button
+                "indent",
+                "|",
+                "undo",
+                "redo",
+              ],
+            }}
+          /> */}
         </div>
         <div className="mt-10 mb-4">
           <label className="block mb-8 text-gray-700">

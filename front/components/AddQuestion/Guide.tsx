@@ -1,7 +1,7 @@
 "use client";
 const Guide = () => {
   return (
-    <div className=" w-full md:w-[60%] md:overflow-auto no-scrollbar h-screen max-w-4xl bg-white rounded-md">
+    <div className=" w-full md:w-[55%] md:overflow-auto no-scrollbar h-screen max-w-4xl bg-white rounded-md">
       <div className="container p-4 mx-auto bg-white rounded shadow-md">
         <h1 className="mb-4 text-2xl font-bold">
           Creating a New Question Guide
