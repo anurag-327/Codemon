@@ -7,6 +7,7 @@ import {
   API_URL,
   QUICKSIGN_CLIENTID,
   QUICKSIGN_CLIENTSECRET,
+  QUICKSIGN_DEVELOPER_URL,
   QUICKSIGN_URL,
 } from "@/credentials/index";
 import { getToken, setToken, removeToken } from "@/helper/tokenhandler";
@@ -68,12 +69,14 @@ export default function page() {
   useEffect(() => {
     const token = getToken();
     if (token) {
+      console.log(token);
       if (callback_url) router.push(callback_url);
       else router.push("/");
     } else {
       if (status === "true" && quickSignToken != undefined) {
         setQuickSignLoading(true);
         setLoading(true);
+
         (async function () {
           let options = {
             method: "POST",
@@ -86,7 +89,9 @@ export default function page() {
           const result = await response.json();
           if (result.status == 200) {
             setToken(result.token);
+            setUser(result.user);
             setLoading(false);
+            console.log(result);
             setQuickSignLoading(false);
             if (callback_url) router.push(callback_url);
             else router.push("/");

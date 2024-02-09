@@ -125,11 +125,19 @@ module.exports.oauth = async (req, res) => {
       const data = await response.json();
       if (response.status === 200 && data) {
         const { name, email, profile } = data.data;
-        const user = await User.findOne({ email: email });
+        const user = await User.findOne({ email: email }).select("-paswword");
         if (user != null) {
-          return res
-            .status(200)
-            .json({ status: 200, token: tokengenerator(user._id) });
+          return res.status(200).json({
+            status: 200,
+            token: tokengenerator(user._id),
+            user: {
+              name: user.name,
+              username: user.username,
+              email: user.email,
+              _id: user._id,
+              role: user.role,
+            },
+          });
         } else {
           const newuser = new User({
             username: email.substring(0, email.indexOf("@")),
@@ -142,9 +150,17 @@ module.exports.oauth = async (req, res) => {
           });
           const result = await newuser.save();
           if (result)
-            return res
-              .status(200)
-              .json({ status: 200, token: tokengenerator(result._id) });
+            return res.status(200).json({
+              status: 200,
+              token: tokengenerator(result._id),
+              user: {
+                name: result.name,
+                username: result.username,
+                email: result.email,
+                _id: result._id,
+                role: result.role,
+              },
+            });
           else
             return res
               .status(500)

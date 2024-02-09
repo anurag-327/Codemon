@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="firstpanel">
         <a
           href="https://github.com/anurag-327/Codemon"
-          className="flex items-center ml-4 logo"
+          className="flex items-center ml-4 text-gray-500 logo"
         >
           <CodeBlock size={25} weight="fill" />
           <span>Codemon</span>
@@ -91,7 +91,7 @@ const Navbar = () => {
           </div>
         ) : (
           <a
-            className="px-6 py-1 text-white bg-red-500 rounded-md"
+            className="py-1 mr-2 text-gray-500  md:rounded-md md:px-6 md:text-white md:bg-red-500"
             href="/login"
           >
             Login
