@@ -16,22 +16,25 @@ const Navbar = () => {
   const setUser = useStore((state) => state.setUser);
   const [dropDown, setDropDown] = useState(false);
   return (
-    <nav className="fixed top-0 z-10 flex items-center justify-between w-full py-2 text-sm bg-white shadow-md p">
+    <nav className="fixed top-0 z-10 flex items-center justify-between w-full py-2 text-sm bg-white border-b shadow-sm p">
       <div className="firstpanel">
         <a
           href="https://github.com/anurag-327/Codemon"
-          className="flex items-center ml-4 text-gray-500 logo"
+          className="flex items-center ml-4 text-gray-600 logo"
         >
           <CodeBlock size={25} weight="fill" />
           <span>Codemon</span>
         </a>
       </div>
-      <div className="flex items-center gap-2 md:mr-3 md:gap-2 secondpanel">
-        <a className="py-1 text-gray-500 md:px-2 hover:text-gray-700" href="/">
+      <div className="flex items-center gap-4 md:mr-3 md:gap-4 secondpanel">
+        <a
+          href="/problems"
+          className="py-1 text-gray-600 md:px-2 hover:text-gray-700"
+        >
           Problems
         </a>
         <a
-          className="py-1 text-gray-500 md:px-2 hover:text-gray-700"
+          className="py-1 text-gray-600 md:px-2 hover:text-gray-700"
           href="/compiler"
         >
           Compiler
@@ -57,7 +60,7 @@ const Navbar = () => {
                   <span className="text-sm font-[400] text-gray-800 ">
                     {user.name}
                   </span>
-                  <span className="overflow-hidden text-xs text-gray-400 ">
+                  <span className="overflow-hidden text-xs text-gray-600 ">
                     {user.email}
                   </span>
                 </div>
@@ -91,7 +94,7 @@ const Navbar = () => {
           </div>
         ) : (
           <a
-            className="py-1 mr-2 text-gray-500  md:rounded-md md:px-6 md:text-white md:bg-red-500"
+            className="py-1 mr-2 text-gray-500 md:rounded-md md:px-6 md:text-white md:bg-red-500"
             href="/login"
           >
             Login

@@ -14,25 +14,21 @@ interface question {
   userCode: String;
   addedBy: String;
 }
+const difficulty = [null, "Easy", "Medium", "Hard"];
 const Solve_QuestionSection = ({ question }: { question: question }) => {
   return (
-    <div className="flex flex-col px-4 py-2 mt-6 bg-white rounded-md">
-      <h2 className="text-3xl font-[500]">{question.name}</h2>
+    <div className="flex flex-col px-4 py-2 mt-2 bg-white rounded-md scroll-smooth">
+      <h2 className="text-2xl font-[500]">{question.name}</h2>
       <div className="flex gap-2 mt-2">
-        <div className="px-2 py-0.5 text-[0.6rem] text-center text-blue-600 bg-gray-100 rounded-full w-fit ">
-          {question.difficultyLevel == 1 && "Easy"}
-          {question.difficultyLevel == 2 && "Medium"}
-          {question.difficultyLevel == 3 && "Hard"}
+        <div className="px-2 py-0.5 text-[0.8rem] text-center text-blue-600 bg-gray-100 rounded-full w-fit ">
+          {difficulty[question.difficultyLevel]}
         </div>
-        <div className="px-3 py-0.5 text-[0.6rem] text-center text-gray-800 bg-gray-100 rounded-full w-fit">
+        <div className="px-3 py-0.5 text-[0.8rem] text-center text-gray-800 bg-gray-100 rounded-full w-fit">
           <span> {question.points.toString()} Points</span>
         </div>
       </div>
-      <div className="flex flex-col gap-1 mt-4 ">
-        <div
-          className="text-gray-700 "
-          dangerouslySetInnerHTML={{ __html: question.description }}
-        />
+      <div className="flex flex-col gap-1 mt-4 font-[400] font-sans text-sm text-gray-800">
+        <div dangerouslySetInnerHTML={{ __html: question.description }} />
       </div>
       <div className="mt-5">
         {question.sampleCases.map((data: any, index: number) => (
