@@ -25,15 +25,10 @@ To run Codemon locally and contribute to its development, follow these steps:
 
 ### Solve Section
 
-![image](https://github.com/anurag-327/Codemon/assets/98267696/47666d17-1378-42f9-8e77-70592548391c)
-![image](https://github.com/anurag-327/Codemon/assets/98267696/c9aed8f1-b9d9-4c71-8502-2423edeca0d9)
-![image](https://github.com/anurag-327/Codemon/assets/98267696/a20bc81e-114a-4918-998d-639531fdfb3b)
+![image](https://github.com/anurag-327/Codemon/assets/98267696/a14f72c4-fc9f-4411-85cf-dac049780bce)
+![image](https://github.com/anurag-327/Codemon/assets/98267696/57fe1415-d94d-446f-b8b2-7030bd653823)
+![image](https://github.com/anurag-327/Codemon/assets/98267696/7b924f4e-6a63-4e2f-9785-0cf807d23e5c)
+
 
 ### Cpp Compiler
 ![image](https://github.com/anurag-327/Codemon/assets/98267696/e2f168ae-515b-4651-a6e4-d9e52bc4a912)
-
-
-
-
-
-
