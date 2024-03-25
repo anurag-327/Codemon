@@ -9,8 +9,8 @@ interface question {
   name: string;
   description: string;
   sampleCases: testcase[];
-  points: Number;
-  difficultyLevel: Number;
+  points: number;
+  difficultyLevel: number;
   userCode: String;
   addedBy: String;
 }

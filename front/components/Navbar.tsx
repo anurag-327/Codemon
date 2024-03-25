@@ -18,10 +18,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 z-10 flex items-center justify-between w-full py-2 text-sm bg-white border-b shadow-sm p">
       <div className="firstpanel">
-        <a
-          href="https://github.com/anurag-327/Codemon"
-          className="flex items-center ml-4 text-gray-600 logo"
-        >
+        <a href="/" className="flex items-center ml-4 text-gray-600 logo">
           <CodeBlock size={25} weight="fill" />
           <span>Codemon</span>
         </a>

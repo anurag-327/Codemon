@@ -10,7 +10,7 @@ interface question {
   name: string;
   question: string;
   points: number;
-  difficultyLevel: Number;
+  difficultyLevel: number;
   _id: string;
 }
 interface columns {

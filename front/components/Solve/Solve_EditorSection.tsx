@@ -2,8 +2,13 @@ import { API_URL } from "@/credentials";
 import { EditorOptions } from "@/helper/Editor";
 import { getToken } from "@/helper/tokenhandler";
 import { solverStore, useStore } from "@/zustand/useStore";
-import Editor from "@monaco-editor/react";
-import { useReducer, useRef, useState } from "react";
+import React, {
+  RefObject,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import {
   ArrowCounterClockwise,
   Bookmark,
@@ -16,6 +21,7 @@ import {
   CodeSimple,
   Play,
 } from "@phosphor-icons/react/dist/ssr";
+
 interface testState {
   hasError: boolean;
   error: string | null;
@@ -38,22 +44,25 @@ interface submitState {
   loading: boolean;
   result: string | null;
 }
-const Solve_EditorSection = ({
-  question,
-  submissions,
-}: {
+interface props {
+  code: string;
   question: any;
   submissions: any;
-}) => {
-  const [userCode, setUserCode] = useState<string>(
-    submissions.length > 0 ? submissions[0].code : question.userCode
-  );
+  Editor: any;
+  onEditorChangeHandler: any;
+  setCode: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Solve_EditorSection = (props: props) => {
+  const { code, question, submissions, Editor, onEditorChangeHandler }: props =
+    props;
   const {
     section,
     setSection,
     addNewSubmission,
     setNewSubmissionLoading,
     setNewSubmissionData,
+    setCode,
   } = solverStore();
   const editorRef = useRef<number | any>(null);
   const [showTestCase, setSowTestCase] = useState<boolean>(true);
@@ -298,7 +307,7 @@ const Solve_EditorSection = ({
           <div className="flex items-center justify-center gap-1 text-gray-600">
             <button
               onClick={() => {
-                setUserCode(question.userCode);
+                setCode(question.userCode);
               }}
               title="Reset Code"
             >
@@ -312,6 +321,28 @@ const Solve_EditorSection = ({
       </header>
     );
   }
+  function Buttons() {
+    return (
+      <div className="top-0 z-10 flex justify-end hidden w-full gap-1 pb-2 bg-white border-b ">
+        <button
+          id="runCodeButton"
+          className="flex items-center justify-center gap-1 px-2 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
+          onClick={runBtn}
+        >
+          <Play size={18} color="#94515f" weight="fill" />
+          <span className="text-sm font-semibold">Run</span>
+        </button>
+        <button
+          id="submitCodeButton"
+          className="flex items-center justify-center gap-1 px-2 py-2 text-green-500 bg-gray-100 rounded-md hover:bg-gray-200"
+          onClick={submitBtn}
+        >
+          <CloudArrowUp size={20} className="text-green-500" />
+          <span className="text-sm font-semibold">Submit</span>
+        </button>
+      </div>
+    );
+  }
   function Footer() {
     return (
       <div className="px-2">
@@ -321,8 +352,20 @@ const Solve_EditorSection = ({
       </div>
     );
   }
+  const handleKeyPress = (event: KeyboardEvent) => {
+    if (event.ctrlKey || event.metaKey) {
+      if (event.key === "'") runBtn();
+      else if (event.key === "Enter") submitBtn();
+    }
+  };
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
   return (
-    <div className="w-full md:flex flex-col hidden gap-2  md:w-[55%] h-[94vh]">
+    <div className="w-full mt-1 md:flex flex-col hidden gap-2  md:w-[55%] h-[94vh]">
       <div className="md:h-[55%] bg-white overflow-hidden h-[70%] border border-gray-300 rounded-lg">
         <Header />
         <Editor
@@ -330,30 +373,16 @@ const Solve_EditorSection = ({
           defaultLanguage="c"
           theme="light"
           options={EditorOptions}
-          value={userCode}
+          value={code}
           onMount={handleEditorDidMount}
-          className="mt-1 "
+          className="mt-1"
+          onChange={onEditorChangeHandler}
         />
         <Footer />
       </div>
       <div className="relative flex flex-col md:h-[45%] gap-2 px-4 pt-2 pb-2 overflow-auto bg-white border border-gray-300 rounded-lg no-scrollbar">
         {/* Run/submit btn  */}
-        <div className="top-0 z-10 flex justify-end w-full gap-1 pb-2 bg-white border-b ">
-          <button
-            className="flex items-center justify-center gap-1 px-2 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
-            onClick={runBtn}
-          >
-            <Play size={18} color="#94515f" weight="fill" />
-            <span className="text-sm font-semibold">Run</span>
-          </button>
-          <button
-            className="flex items-center justify-center gap-1 px-2 py-2 text-green-500 bg-gray-100 rounded-md hover:bg-gray-200"
-            onClick={submitBtn}
-          >
-            <CloudArrowUp size={20} className="text-green-500" />
-            <span className="text-sm font-semibold">Submit</span>
-          </button>
-        </div>
+        <Buttons />
         {/* Header */}
         <div className="flex gap-1">
           <button className="flex hover:bg-gray-100 hover:after:bg-gray-100 p-1 rounded-md after:content[''] after:w-[10px] after:h-[0.5px] after:rotate-90 after:bg-gray-400 items-center justify-center gap-1 text-xs w-fit">
@@ -384,7 +413,7 @@ export default Solve_EditorSection;
 
 function Loader() {
   return (
-    <div className="w-full max-h-[180px] py-2 mx-auto bg-white ">
+    <div className="w-full py-2 mx-auto bg-white ">
       <div className="flex space-x-2 animate-pulse">
         <div className="flex-1 space-y-2">
           <div className="h-5 w-[20%] rounded bg-slate-200"></div>
@@ -398,6 +427,8 @@ function Loader() {
             <div className="h-5 bg-gray-300 rounded"></div>
             <div className="h-5 w-[20%] bg-gray-300 rounded"></div>
             <div className="h-5 bg-gray-300 rounded"></div>
+            <div className="h-5 w-[20%] bg-gray-300 rounded"></div>
+            <div className="h-5 bg-gray-300 rounded"></div>
           </div>
         </div>
       </div>
@@ -407,11 +438,10 @@ function Loader() {
 
 function SampleCases({ question }: { question: any }) {
   const [selectedCase, setSelectCase] = useState(0);
-  console.log(selectedCase);
   return (
     <div className="flex flex-col gap-2 mt-4 overflow-auto no-scrollbar">
       <div className="flex gap-2 text-sm text-black ">
-        {question.sampleCases.map((_, index) => (
+        {question.sampleCases.map((data: any, index: any) => (
           <button
             onClick={() => setSelectCase(index)}
             className={`${
@@ -438,7 +468,7 @@ function SampleCases({ question }: { question: any }) {
           </div>
         </div>
         <div>
-          <span className="text-sm text-gray-500">Output</span>
+          <span className="text-sm text-gray-500">Expected Output</span>
           <div className="p-2 bg-gray-100 rounded-md">
             <pre>{question.sampleCases[selectedCase].expectedOutput}</pre>
           </div>
