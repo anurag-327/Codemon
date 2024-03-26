@@ -19,8 +19,8 @@ interface formValues {
   password: string;
 }
 const SigninSchema = Yup.object().shape({
-  cred: Yup.string().required("Credentials required"),
-  password: Yup.string().required("Password Cannot be empty"),
+  cred: Yup.string().required("Required"),
+  password: Yup.string().required("Required"),
 });
 
 export default function page() {
@@ -107,11 +107,11 @@ export default function page() {
   }, []);
   return (
     <main className="w-full font-sans h-[100vh] flex justify-center items-center">
-      <div className="flex flex-col gap-8  md:w-[380px] w-[95%] px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
+      <div className="flex flex-col gap-8  sm:w-[380px] w-[100%] px-4 py-8 sm:rounded-2xl sm:border sm:shadow-sm border-gray-300">
         <div>
           <h2 className="text-4xl font-bold">Sign In</h2>
           <p className="text-sm font-semibold text-gray-600">
-            Sign in to continue using services
+            Sign in to continue using Codemon
           </p>
         </div>
         <div>
@@ -162,12 +162,7 @@ export default function page() {
                     />
                   </div>
                   {props.errors.cred && (
-                    <div id="crederror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />
+                    <div id="crederror" className="text-xs text-red-600">
                       {props.errors.cred}
                     </div>
                   )}
@@ -227,12 +222,7 @@ export default function page() {
                     </button>
                   </div>
                   {props.errors.password && (
-                    <div id="passworderror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />
+                    <div id="passworderror" className="text-xs text-red-600">
                       {props.errors.password}
                     </div>
                   )}
@@ -245,7 +235,7 @@ export default function page() {
                     type="submit"
                     disabled={loading}
                   >
-                    SignIn
+                    Sign in
                   </button>
                   <span className="block my-2 text-sm text-center text-gray-600">
                     Didn't have any account?{" "}
@@ -259,13 +249,8 @@ export default function page() {
                   {error && (
                     <div
                       id="error"
-                      className="text-sm font-semibold text-center text-red-600"
+                      className="text-xs font-semibold text-center text-red-600"
                     >
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />
                       {error}
                     </div>
                   )}

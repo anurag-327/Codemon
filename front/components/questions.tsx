@@ -59,7 +59,7 @@ const Questions = () => {
   }, [page, capacity]);
 
   return (
-    <div className="w-[100%] mt-20 md:w-[80%] md:max-w-[800px] mx-auto p-5">
+    <div className="w-[100%] mt-10 md:w-[80%] md:max-w-[800px] mx-auto p-5">
       <div className="flex flex-col items-center justify-center w-full gap-4 mt-8">
         {loading ? (
           <QuestionContainerSkeleton />

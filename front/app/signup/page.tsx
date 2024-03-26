@@ -22,12 +22,12 @@ const SignupSchema = Yup.object().shape({
   userName: Yup.string()
     .min(2, "Too short!")
     .max(30, "Too Long!")
-    .required("username field cannot be empty"),
+    .required("Required"),
   name: Yup.string()
     .min(5, "Too short!")
     .max(30, "Too Long!")
-    .required("name field cannot be empty"),
-  email: Yup.string().email("Invalid email").required("Email Required"),
+    .required("Required"),
+  email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string()
     .min(5, "password length should be in range 5-10")
     .max(10, "password length should be in range 5-10"),
@@ -88,11 +88,11 @@ export default function page() {
   }, [user]);
   return (
     <main className="w-full mt-6 md:mt-0 font-sans min-h-[100vh] flex justify-center items-center">
-      <div className="flex flex-col gap-8  md:w-[450px] w-[95%]  px-4 py-8 rounded-2xl border shadow-sm border-gray-300">
+      <div className="flex flex-col gap-8  md:w-[450px] w-[100%]  px-4 py-8 sm:rounded-2xl sm:border sm:shadow-sm border-gray-300">
         <div>
           <h2 className="text-4xl font-bold">Sign Up</h2>
           <p className="text-sm font-semibold text-gray-600">
-            Sign up to continue using services
+            Sign up to continue using codemon
           </p>
         </div>
         <div>
@@ -142,12 +142,7 @@ export default function page() {
                     />
                   </div>
                   {props.errors.name && (
-                    <div id="nameerror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />{" "}
+                    <div id="nameerror" className="text-xs text-red-600">
                       {props.errors.name}
                     </div>
                   )}
@@ -185,12 +180,7 @@ export default function page() {
                     />
                   </div>
                   {props.errors.email && (
-                    <div id="emailerror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />{" "}
+                    <div id="emailerror" className="text-xs text-red-600">
                       {props.errors.email}
                     </div>
                   )}
@@ -226,12 +216,7 @@ export default function page() {
                     />
                   </div>
                   {props.errors.userName && (
-                    <div id="usernameerror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />{" "}
+                    <div id="usernameerror" className="text-xs text-red-600">
                       {props.errors.userName}
                     </div>
                   )}
@@ -290,12 +275,7 @@ export default function page() {
                     </button>
                   </div>
                   {props.errors.password && (
-                    <div id="passworderror" className="text-sm text-red-600">
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />{" "}
+                    <div id="passworderror" className="text-xs text-red-600">
                       {props.errors.password}
                     </div>
                   )}
@@ -322,7 +302,7 @@ export default function page() {
                     type="submit"
                     disabled={loading}
                   >
-                    SignUp
+                    Sign up
                   </button>
                   <span className="block my-2 text-sm text-center text-gray-700">
                     Already have an account?{" "}
@@ -336,13 +316,8 @@ export default function page() {
                   {error && (
                     <div
                       id="error"
-                      className="text-sm font-semibold text-center text-red-600"
+                      className="text-xs font-semibold text-center text-red-600"
                     >
-                      <ShieldWarning
-                        className="inline-block"
-                        size={20}
-                        color="#b06545"
-                      />{" "}
                       {error}
                     </div>
                   )}

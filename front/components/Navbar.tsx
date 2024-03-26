@@ -18,7 +18,7 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 z-10 flex items-center justify-between w-full py-2 text-sm bg-white border-b shadow-sm p">
       <div className="firstpanel">
-        <a href="/" className="flex items-center ml-4 text-gray-600 logo">
+        <a href="/" className="flex items-center ml-4 text-gray-800 logo">
           <CodeBlock size={25} weight="fill" />
           <span>Codemon</span>
         </a>
@@ -26,12 +26,12 @@ const Navbar = () => {
       <div className="flex items-center gap-4 md:mr-3 md:gap-4 secondpanel">
         <a
           href="/problems"
-          className="py-1 text-gray-600 md:px-2 hover:text-gray-700"
+          className="py-1 text-gray-800 md:px-2 hover:text-gray-700"
         >
           Problems
         </a>
         <a
-          className="py-1 text-gray-600 md:px-2 hover:text-gray-700"
+          className="py-1 text-gray-800 md:px-2 hover:text-gray-700"
           href="/compiler"
         >
           Compiler
@@ -63,10 +63,10 @@ const Navbar = () => {
                 </div>
                 <hr className="w-full h-[0.5px] mt-2 bg-gray-200 rounded-full "></hr>
                 <div className="flex flex-col gap-3 mt-4">
-                  {/* <a href="/" className="flex items-center gap-1 mt-4">
+                  <a href="/" className="flex items-center gap-1 mt-4">
                     <House size={18} weight="regular" />
                     Home
-                  </a> */}
+                  </a>
                   <a
                     href={`/user/${user.username}`}
                     className="flex items-center gap-1"
@@ -91,7 +91,7 @@ const Navbar = () => {
           </div>
         ) : (
           <a
-            className="py-1 mr-2 text-gray-500 md:rounded-md md:px-6 md:text-white md:bg-red-500"
+            className="px-4 py-1 text-gray-800 bg-gray-100 border md:rounded-md "
             href="/login"
           >
             Login
